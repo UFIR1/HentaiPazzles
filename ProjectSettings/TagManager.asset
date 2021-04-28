@@ -3,15 +3,17 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - LevelBorder
+  - LevelPlatform
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Char
   - Water
   - UI
-  - 
+  - Level
   - 
   - 
   - 

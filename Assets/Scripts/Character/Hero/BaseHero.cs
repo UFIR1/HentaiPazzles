@@ -11,7 +11,9 @@ public abstract class BaseHero : BaseChar
 	[SerializeField]
 	protected Rigidbody2D rigidbody;
 	[SerializeField]
-	protected BoxCollider2D collider;
+	protected BoxCollider2D downCollider;
+	[SerializeField]
+	protected BoxCollider2D upCollider;
 	[SerializeField]
 	protected HeroMoveCondition heroMoveCondition = 0;
 	[SerializeField]
@@ -23,8 +25,10 @@ public abstract class BaseHero : BaseChar
 	protected int jumpCount = 2;
 	[SerializeField]
 	protected int currentJumpCount = 2;
-	protected OverallSize overallSizeLeft;
-	protected OverallSize overallSizeRight;
+	protected OverallSize overallSizeULeft;
+	protected OverallSize overallSizeURight;
+	protected OverallSize overallSizeDLeft;
+	protected OverallSize overallSizeDRight;
 	protected bool jumpBlock = false;
 	private bool inJump = false;
 	protected bool InJump
@@ -33,17 +37,84 @@ public abstract class BaseHero : BaseChar
 		set
 		{
 			inJump = value;
-			collider.enabled = !value;
+			downCollider.enabled = !value;
+			if (overallSizeULeft.raycast.collider?.tag != Tags.LevelBorder.ToString() && overallSizeURight.raycast.collider?.tag != Tags.LevelBorder.ToString())
+			{
+				if (overallSizeULeft.raycast.collider == null || overallSizeULeft.raycast.collider == null)
+				{
+					upCollider.enabled = true;
+				}
+				if (value)
+				{
+					upCollider.enabled = !value;
+					InvokeRepeating("FinishJump", 0.3f, 0.1f);
+				}
+			}
 		}
+	}
+	void FinishJump()
+	{
+		if (overallSizeULeft.raycast.collider?.tag != Tags.LevelBorder.ToString() && overallSizeURight.raycast.collider?.tag != Tags.LevelBorder.ToString())
+		{
+			if (overallSizeULeft.raycast.collider == null || overallSizeULeft.raycast.collider == null)
+			{
+				upCollider.enabled = true;
+				InvokeRepeating("FinishJump", 0.3f, 0.1f);
+			}
+		}
+	}
+	private Collider2D lastDLeftCollider;
+	private Collider2D lastDRightCollider;
+
+	private bool inJumpOff = false;
+	protected bool InJumpOff
+	{
+		get => inJumpOff;
+		set
+		{
+			inJumpOff = value;
+			downCollider.enabled = !value;
+			if (value)
+			{
+				upCollider.enabled = false;
+			}
+			InvokeRepeating("FinishJumpOff", 0.3f, 0.1f);
+
+
+		}
+	}
+	void FinishJumpOff()
+	{
+		if (
+				   (overallSizeULeft.raycast.collider == null
+				   || overallSizeULeft.raycast.collider != lastDLeftCollider
+				   || overallSizeURight.raycast.collider != lastDRightCollider)
+				   &&
+				   (overallSizeURight.raycast.collider == null
+				   || overallSizeURight.raycast.collider != lastDLeftCollider
+				   || overallSizeURight.raycast.collider != lastDRightCollider)
+				   )
+		{
+			upCollider.enabled = true;
+		}
+		CancelInvoke("FinishJumpOff");
 	}
 	#endregion
 	// Start is called before the first frame update
 	void Start()
 	{
 		rigidbody = gameObject.GetComponent<Rigidbody2D>();
-		collider = gameObject.GetComponent<BoxCollider2D>();
-		overallSizeLeft = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "Left").FirstOrDefault();
-		overallSizeRight = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "Right").FirstOrDefault();
+		var colliders = gameObject.GetComponents<BoxCollider2D>();
+		downCollider = colliders.Where(c => c.offset.y < 0).FirstOrDefault();
+		upCollider = colliders.Where(c => c.offset.y > 0).FirstOrDefault();
+
+		overallSizeDLeft = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "DLeft").FirstOrDefault();
+		overallSizeDRight = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "DRight").FirstOrDefault();
+		overallSizeULeft = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "ULeft").FirstOrDefault();
+		overallSizeURight = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "URight").FirstOrDefault();
+
+
+
 		LocalStart();
 	}
 	abstract protected void LocalStart();
@@ -52,11 +123,11 @@ public abstract class BaseHero : BaseChar
 	void Update()
 	{
 		KeyEventer();
-		if (TouchGround())
+		if (!InJump && TouchGround())
 		{
 			//if (!jumpBlock)
 			//{
-				currentJumpCount = jumpCount;
+			currentJumpCount = jumpCount;
 			//}
 		}
 
@@ -65,9 +136,9 @@ public abstract class BaseHero : BaseChar
 	bool TouchGround()
 	{
 		return (
-			((overallSizeRight.raycast.transform?.tag == Tags.LevelBorder.ToString() || overallSizeRight.raycast.transform?.tag == Tags.LevelPlatform.ToString())
+			((overallSizeDRight.raycast.transform?.tag == Tags.LevelBorder.ToString() || overallSizeDRight.raycast.transform?.tag == Tags.LevelPlatform.ToString())
 			||
-			(overallSizeLeft.raycast.transform?.tag == Tags.LevelBorder.ToString() || overallSizeLeft.raycast.transform?.tag == Tags.LevelPlatform.ToString()))
+			(overallSizeDLeft.raycast.transform?.tag == Tags.LevelBorder.ToString() || overallSizeDLeft.raycast.transform?.tag == Tags.LevelPlatform.ToString()))
 			&&
 			(rigidbody.velocity.y <= 0)
 			);
@@ -82,21 +153,41 @@ public abstract class BaseHero : BaseChar
 	}
 	void JumpFinish()
 	{
-		if (rigidbody.velocity.y <= 0)
+		if (InJump)
 		{
-			if (overallSizeLeft.raycast.collider != null || overallSizeRight.raycast.collider != null)
+			if (rigidbody.velocity.y <= 0)
 			{
-				if (!(overallSizeLeft.raycast.distance < 0.95f || overallSizeRight.raycast.distance < 0.95f))
+				if (overallSizeDLeft.raycast.collider != null || overallSizeDRight.raycast.collider != null)
+				{
+					if (!(overallSizeDLeft.raycast.distance < 0.95f || overallSizeDRight.raycast.distance < 0.95f))
+					{
+						InJump = false;
+					}
+				}
+				else
 				{
 					InJump = false;
 				}
 			}
 			else
 			{
-				InJump = false;
+				if (overallSizeULeft.raycast.collider?.tag == Tags.LevelBorder.ToString() || overallSizeURight.raycast.collider?.tag == Tags.LevelBorder.ToString())
+				{
+					upCollider.enabled = true;
+				}
 			}
-
 		}
+		if (inJumpOff)
+		{
+			if (rigidbody.velocity.y <= 0)
+			{
+				if (overallSizeDLeft.raycast.collider != lastDLeftCollider && overallSizeDRight.raycast.collider != lastDRightCollider)
+				{
+					InJumpOff = false;
+				}
+			}
+		}
+
 	}
 	abstract protected void LocalFixedUpdate();
 	void Move()
@@ -146,9 +237,16 @@ public abstract class BaseHero : BaseChar
 			JumpOff();
 		}
 	}
+
 	void JumpOff()
 	{
+		lastDLeftCollider = overallSizeDLeft.raycast.collider;
+		lastDRightCollider = overallSizeDRight.raycast.collider;
+		if (lastDLeftCollider?.tag != Tags.LevelBorder.ToString() && lastDRightCollider?.tag != Tags.LevelBorder.ToString())
+		{
 
+			InJumpOff = true;
+		}
 	}
 	void Jump()
 	{
