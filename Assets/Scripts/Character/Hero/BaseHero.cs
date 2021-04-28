@@ -5,6 +5,12 @@ using UnityEngine;
 
 public abstract class BaseHero : BaseChar
 {
+	[SerializeField]
+	protected SpriteRenderer spriteRenderer;
+	#region Animation
+	[SerializeField]
+	protected Animator animator;
+	#endregion
 
 	#region lockalMovemantFields
 
@@ -15,7 +21,28 @@ public abstract class BaseHero : BaseChar
 	[SerializeField]
 	protected BoxCollider2D upCollider;
 	[SerializeField]
-	protected HeroMoveCondition heroMoveCondition = 0;
+	private HeroMoveCondition heroMoveCondition = 0;
+
+	protected HeroMoveCondition HeroMoveCondition
+	{
+		get => heroMoveCondition;
+		set
+		{
+			heroMoveCondition = value;
+			if (animator != null)
+			{
+				if ((int)value != 0)
+				{
+					animator.SetBool("Run", true);
+					spriteRenderer.flipX = (value == HeroMoveCondition.left);
+				}
+				else
+				{
+					animator.SetBool("Run", false);
+				}
+			}
+		}
+	}
 	[SerializeField]
 	[Range(0.0f, 10.0f)]
 	protected float speed = 5.5f;
@@ -59,6 +86,10 @@ public abstract class BaseHero : BaseChar
 					InvokeRepeating("FinishJump", 0.3f, 0.1f);
 				}
 			}
+			if (animator != null)
+			{
+				animator.SetBool("Jump", value);
+			}
 
 		}
 	}
@@ -94,6 +125,8 @@ public abstract class BaseHero : BaseChar
 
 		}
 	}
+
+
 	void FinishJumpOff()
 	{
 		if (overallSizeDLeft.raycast.collider == null && overallSizeDRight.raycast.collider == null)
@@ -102,12 +135,12 @@ public abstract class BaseHero : BaseChar
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-				   /* && overallSizeULeft.raycast.collider != lastDLeftCollider
-					&& overallSizeURight.raycast.collider != lastDRightCollider*/)
+					 /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+					  && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-				   /* && overallSizeURight.raycast.collider != lastDLeftCollider
-					&& overallSizeURight.raycast.collider != lastDRightCollider*/)
+					 /* && overallSizeURight.raycast.collider != lastDLeftCollider
+					  && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
@@ -120,6 +153,7 @@ public abstract class BaseHero : BaseChar
 	// Start is called before the first frame update
 	void Start()
 	{
+		
 		rigidbody = gameObject.GetComponent<Rigidbody2D>();
 		var colliders = gameObject.GetComponents<BoxCollider2D>();
 		downCollider = colliders.Where(c => c.offset.y < 0).FirstOrDefault();
@@ -218,7 +252,7 @@ public abstract class BaseHero : BaseChar
 
 
 
-		switch (heroMoveCondition)
+		switch (HeroMoveCondition)
 		{
 			case HeroMoveCondition.left:
 				if (movementBlocUL.raycast.collider?.tag == Tags.LevelBorder.ToString() || movementBlocDL.raycast.collider?.tag == Tags.LevelBorder.ToString())
@@ -251,21 +285,22 @@ public abstract class BaseHero : BaseChar
 	{
 		if (Input.GetKeyDown(HotKeysHelper.MoveRight))
 		{
-			heroMoveCondition++;
+			HeroMoveCondition++;
+
 		}
 		if (Input.GetKeyUp(HotKeysHelper.MoveRight))
 		{
-			heroMoveCondition--;
+			HeroMoveCondition--;
 		}
 		if (Input.GetKeyDown(HotKeysHelper.MoveLeft))
 		{
 
-			heroMoveCondition--;
+			HeroMoveCondition--;
 
 		}
 		if (Input.GetKeyUp(HotKeysHelper.MoveLeft))
 		{
-			heroMoveCondition++;
+			HeroMoveCondition++;
 		}
 		if (Input.GetKeyDown(HotKeysHelper.MoveUp))
 		{
