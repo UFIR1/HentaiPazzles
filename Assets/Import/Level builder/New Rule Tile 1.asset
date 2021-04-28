@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
   m_Name: New Rule Tile 1
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: 0}
-  m_DefaultGameObject: {fileID: 0}
+  m_DefaultSprite: {fileID: 1658236287841790503, guid: a2d0af91b3cf2664b9475d8354820c42,
+    type: 3}
+  m_DefaultGameObject: {fileID: 5842384831953062365, guid: 030d39fb3e057c847b3f9e7760a4e696,
+    type: 3}
   m_DefaultColliderType: 1
   m_TilingRules: []
