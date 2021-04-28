@@ -17,7 +17,8 @@ public class OverallSize : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        raycast = Physics2D.Raycast(transform.position, Vector2.down, length,mask);
+
+        raycast = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector3.down), length,mask);
     }
     void OnDrawGizmosSelected()
     {

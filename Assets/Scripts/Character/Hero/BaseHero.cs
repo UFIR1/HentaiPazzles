@@ -29,6 +29,13 @@ public abstract class BaseHero : BaseChar
 	protected OverallSize overallSizeURight;
 	protected OverallSize overallSizeDLeft;
 	protected OverallSize overallSizeDRight;
+
+	protected OverallSize movementBlocUL;
+	protected OverallSize movementBlocUR;
+	protected OverallSize movementBlocDL;
+	protected OverallSize movementBlocDR;
+
+
 	protected bool jumpBlock = false;
 	private bool inJump = false;
 	protected bool InJump
@@ -40,26 +47,30 @@ public abstract class BaseHero : BaseChar
 			downCollider.enabled = !value;
 			if (overallSizeULeft.raycast.collider?.tag != Tags.LevelBorder.ToString() && overallSizeURight.raycast.collider?.tag != Tags.LevelBorder.ToString())
 			{
-				if (overallSizeULeft.raycast.collider == null || overallSizeULeft.raycast.collider == null)
+				if (overallSizeULeft.raycast.collider == null && overallSizeURight.raycast.collider == null)
 				{
 					upCollider.enabled = true;
 				}
 				if (value)
 				{
+
 					upCollider.enabled = !value;
+
 					InvokeRepeating("FinishJump", 0.3f, 0.1f);
 				}
 			}
+
 		}
 	}
 	void FinishJump()
 	{
-		if (overallSizeULeft.raycast.collider?.tag != Tags.LevelBorder.ToString() && overallSizeURight.raycast.collider?.tag != Tags.LevelBorder.ToString())
+
+		if (overallSizeULeft.raycast.collider == null && overallSizeURight.raycast.collider == null)
 		{
-			if (overallSizeULeft.raycast.collider == null || overallSizeULeft.raycast.collider == null)
+			if (!InJump)
 			{
 				upCollider.enabled = true;
-				InvokeRepeating("FinishJump", 0.3f, 0.1f);
+				CancelInvoke("FinishJump");
 			}
 		}
 	}
@@ -85,19 +96,25 @@ public abstract class BaseHero : BaseChar
 	}
 	void FinishJumpOff()
 	{
+		if (overallSizeDLeft.raycast.collider == null && overallSizeDRight.raycast.collider == null)
+		{
+			downCollider.enabled = true;
+		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-				   || overallSizeULeft.raycast.collider != lastDLeftCollider
-				   || overallSizeURight.raycast.collider != lastDRightCollider)
+				   /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+					&& overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-				   || overallSizeURight.raycast.collider != lastDLeftCollider
-				   || overallSizeURight.raycast.collider != lastDRightCollider)
+				   /* && overallSizeURight.raycast.collider != lastDLeftCollider
+					&& overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
+
+			CancelInvoke("FinishJumpOff");
 		}
-		CancelInvoke("FinishJumpOff");
+
 	}
 	#endregion
 	// Start is called before the first frame update
@@ -112,6 +129,11 @@ public abstract class BaseHero : BaseChar
 		overallSizeDRight = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "DRight").FirstOrDefault();
 		overallSizeULeft = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "ULeft").FirstOrDefault();
 		overallSizeURight = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "URight").FirstOrDefault();
+
+		movementBlocUL = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "ULeftMB").FirstOrDefault();
+		movementBlocUR = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "URightMB").FirstOrDefault();
+		movementBlocDL = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "DLeftMB").FirstOrDefault();
+		movementBlocDR = gameObject.GetComponentsInChildren<OverallSize>().Where(x => x.Name == "DRightMB").FirstOrDefault();
 
 
 
@@ -174,6 +196,7 @@ public abstract class BaseHero : BaseChar
 				if (overallSizeULeft.raycast.collider?.tag == Tags.LevelBorder.ToString() || overallSizeURight.raycast.collider?.tag == Tags.LevelBorder.ToString())
 				{
 					upCollider.enabled = true;
+					InJump = false;
 				}
 			}
 		}
@@ -192,15 +215,33 @@ public abstract class BaseHero : BaseChar
 	abstract protected void LocalFixedUpdate();
 	void Move()
 	{
+
+
+
 		switch (heroMoveCondition)
 		{
 			case HeroMoveCondition.left:
-				transform.Translate(Vector3.left * Time.deltaTime * speed);
+				if (movementBlocUL.raycast.collider?.tag == Tags.LevelBorder.ToString() || movementBlocDL.raycast.collider?.tag == Tags.LevelBorder.ToString())
+				{
+
+				}
+				else
+				{
+					transform.Translate(Vector3.left * Time.deltaTime * speed);
+
+				}
 				break;
 			case HeroMoveCondition.stay:
 				break;
 			case HeroMoveCondition.right:
-				transform.Translate(Vector3.right * Time.deltaTime * speed);
+				if (movementBlocUR.raycast.collider?.tag == Tags.LevelBorder.ToString() || movementBlocDR.raycast.collider?.tag == Tags.LevelBorder.ToString())
+				{
+
+				}
+				else
+				{
+					transform.Translate(Vector3.right * Time.deltaTime * speed);
+				}
 				break;
 			default:
 				break;
@@ -218,7 +259,9 @@ public abstract class BaseHero : BaseChar
 		}
 		if (Input.GetKeyDown(HotKeysHelper.MoveLeft))
 		{
+
 			heroMoveCondition--;
+
 		}
 		if (Input.GetKeyUp(HotKeysHelper.MoveLeft))
 		{
@@ -240,6 +283,8 @@ public abstract class BaseHero : BaseChar
 
 	void JumpOff()
 	{
+		CancelInvoke("FinishJumpOff");
+		CancelInvoke("FinishJump");
 		lastDLeftCollider = overallSizeDLeft.raycast.collider;
 		lastDRightCollider = overallSizeDRight.raycast.collider;
 		if (lastDLeftCollider?.tag != Tags.LevelBorder.ToString() && lastDRightCollider?.tag != Tags.LevelBorder.ToString())
@@ -247,9 +292,12 @@ public abstract class BaseHero : BaseChar
 
 			InJumpOff = true;
 		}
+
 	}
 	void Jump()
 	{
+		CancelInvoke("FinishJumpOff");
+		CancelInvoke("FinishJump");
 		if (currentJumpCount > 0)
 		{
 			rigidbody.velocity = Vector2.zero;
