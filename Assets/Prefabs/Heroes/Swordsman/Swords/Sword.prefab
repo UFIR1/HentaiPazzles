@@ -149,7 +149,7 @@ MonoBehaviour:
   Damage: 0
   Shooter: {fileID: 0}
   Speed: 9.95
-  Forse: 2
+  Forse: 20
   LifeTime: 0.09
 --- !u!1 &7023996933417062348
 GameObject:
