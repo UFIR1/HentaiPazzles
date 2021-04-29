@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEditor;
+using UnityEditor.UIElements;
+using UnityEngine.UIElements;
 
 public abstract class BaseHero : BaseChar
 {
@@ -28,13 +31,25 @@ public abstract class BaseHero : BaseChar
 		get => heroMoveCondition;
 		set
 		{
-			heroMoveCondition = value;
+			if ((int)value > 1)
+			{
+				heroMoveCondition = (HeroMoveCondition)1;
+			}
+			else
+			if ((int)value < -1)
+			{
+				heroMoveCondition = (HeroMoveCondition)(-1);
+			}
+			else
+			{
+				heroMoveCondition = value;
+			}
 			if (animator != null)
 			{
 				if ((int)value != 0)
 				{
 					animator.SetBool("Run", true);
-					spriteRenderer.flipX = (value == HeroMoveCondition.left);
+					spriteRenderer.flipX = (heroMoveCondition == HeroMoveCondition.left);
 				}
 				else
 				{
@@ -47,8 +62,10 @@ public abstract class BaseHero : BaseChar
 	[Range(0.0f, 10.0f)]
 	protected float speed = 5.5f;
 	[SerializeField]
+	//[TutInput]
 	protected float jumpForse = 1f;
 	[SerializeField]
+	//[TutInput]
 	protected int jumpCount = 2;
 	[SerializeField]
 	protected int currentJumpCount = 2;
@@ -135,12 +152,12 @@ public abstract class BaseHero : BaseChar
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-					 /* && overallSizeULeft.raycast.collider != lastDLeftCollider
-					  && overallSizeURight.raycast.collider != lastDRightCollider*/)
+					  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+					   && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-					 /* && overallSizeURight.raycast.collider != lastDLeftCollider
-					  && overallSizeURight.raycast.collider != lastDRightCollider*/)
+					  /* && overallSizeURight.raycast.collider != lastDLeftCollider
+					   && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
@@ -153,7 +170,7 @@ public abstract class BaseHero : BaseChar
 	// Start is called before the first frame update
 	void Start()
 	{
-		
+
 		rigidbody = gameObject.GetComponent<Rigidbody2D>();
 		var colliders = gameObject.GetComponents<BoxCollider2D>();
 		downCollider = colliders.Where(c => c.offset.y < 0).FirstOrDefault();
@@ -173,7 +190,6 @@ public abstract class BaseHero : BaseChar
 
 		LocalStart();
 	}
-	abstract protected void LocalStart();
 
 	// Update is called once per frame
 	void Update()
@@ -199,7 +215,6 @@ public abstract class BaseHero : BaseChar
 			(rigidbody.velocity.y <= 0)
 			);
 	}
-	abstract protected void LocalUpdate();
 	private void FixedUpdate()
 	{
 		Move();
@@ -286,7 +301,6 @@ public abstract class BaseHero : BaseChar
 		if (Input.GetKeyDown(HotKeysHelper.MoveRight))
 		{
 			HeroMoveCondition++;
-
 		}
 		if (Input.GetKeyUp(HotKeysHelper.MoveRight))
 		{
@@ -294,9 +308,7 @@ public abstract class BaseHero : BaseChar
 		}
 		if (Input.GetKeyDown(HotKeysHelper.MoveLeft))
 		{
-
 			HeroMoveCondition--;
-
 		}
 		if (Input.GetKeyUp(HotKeysHelper.MoveLeft))
 		{
@@ -314,8 +326,17 @@ public abstract class BaseHero : BaseChar
 		{
 			JumpOff();
 		}
+		if (Input.GetKeyDown(HotKeysHelper.Hit))
+		{
+			HitStart();
+		}
+		if (Input.GetKeyUp(HotKeysHelper.Hit))
+		{
+			HitFinish();
+		}
 	}
-
+	abstract protected void HitStart();
+	abstract protected void HitFinish();
 	void JumpOff()
 	{
 		CancelInvoke("FinishJumpOff");
@@ -341,12 +362,17 @@ public abstract class BaseHero : BaseChar
 			jumpBlock = true;
 			InJump = true;
 		}
-
 	}
+
 }
+
+
 public enum HeroMoveCondition
 {
 	left = -1,
 	stay = 0,
 	right = 1
 }
+
+
+

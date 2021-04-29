@@ -5,6 +5,35 @@ using UnityEngine.Events;
 
 public class Swordsman : BaseHero
 {
+	public GameObject swordSplesh;
+	protected override void HitStart()
+	{
+		animator.Play("MiliHit");
+		
+		
+		
+		var projRot = swordSplesh.transform.rotation;
+		var projectile = Instantiate(swordSplesh, this.transform.position, new Quaternion( projRot.x,projRot.y, (spriteRenderer.flipX == true)?180:0,projRot.w));
+		var weapon = projectile.GetComponent<BaseProjectile>();
+		weapon.Damage = damage;
+		weapon.Shooter = gameObject;
+	}
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+		
+		if (collision.gameObject.tag == Tags.Enemy.ToString())
+		{
+			Physics2D.IgnoreCollision(collision.collider, downCollider);
+			Physics2D.IgnoreCollision(collision.collider, upCollider);
+
+		}
+	}
+
+	protected override void HitFinish()
+	{
+		
+	}
+
 	protected override void LocalFixedUpdate()
 	{
 	}

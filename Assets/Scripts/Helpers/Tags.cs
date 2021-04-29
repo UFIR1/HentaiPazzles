@@ -5,5 +5,7 @@ using UnityEngine;
 public enum Tags 
 {
     LevelBorder,
-    LevelPlatform
+    LevelPlatform,
+    Enemy,
+    Player
 }

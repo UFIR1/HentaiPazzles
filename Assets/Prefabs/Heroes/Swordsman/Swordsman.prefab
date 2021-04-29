@@ -1113,6 +1113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf254716b820d784cbe8e3df7cb6400c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  heals: 0
+  damage: 10
   spriteRenderer: {fileID: 2089216817861843892}
   animator: {fileID: 3568542462285532199}
   rigidbody: {fileID: 0}
@@ -1123,6 +1125,8 @@ MonoBehaviour:
   jumpForse: 15
   jumpCount: 2
   currentJumpCount: 2
+  swordSplesh: {fileID: 5207411402787290305, guid: fabce4458e84d384a8089aa52996bac1,
+    type: 3}
 --- !u!61 &2089216817953998216
 BoxCollider2D:
   m_ObjectHideFlags: 0
