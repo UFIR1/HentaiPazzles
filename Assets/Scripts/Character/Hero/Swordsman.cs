@@ -18,16 +18,7 @@ public class Swordsman : BaseHero
 		weapon.Damage = damage;
 		weapon.Shooter = gameObject;
 	}
-	void OnCollisionEnter2D(Collision2D collision)
-	{
-		
-		if (collision.gameObject.tag == Tags.Enemy.ToString())
-		{
-			Physics2D.IgnoreCollision(collision.collider, downCollider);
-			Physics2D.IgnoreCollision(collision.collider, upCollider);
-
-		}
-	}
+	
 
 	protected override void HitFinish()
 	{

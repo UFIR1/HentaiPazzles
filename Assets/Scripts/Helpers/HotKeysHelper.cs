@@ -10,4 +10,5 @@ public static class HotKeysHelper
 	public static KeyCode MoveDown { get; set; } = KeyCode.S;
 	public static KeyCode Hit { get; set; } = KeyCode.Space;
 	public static KeyCode Interaction { get; set; } = KeyCode.E;
+
 }

@@ -152,12 +152,12 @@ public abstract class BaseHero : BaseChar
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-					  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
-					   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+						  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+						   && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-					  /* && overallSizeURight.raycast.collider != lastDLeftCollider
-					   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+						  /* && overallSizeURight.raycast.collider != lastDLeftCollider
+						   && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
@@ -167,6 +167,7 @@ public abstract class BaseHero : BaseChar
 
 	}
 	#endregion
+	protected List<localInteractiveObject> interactiveObjects = new List<localInteractiveObject>();
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -334,6 +335,10 @@ public abstract class BaseHero : BaseChar
 		{
 			HitFinish();
 		}
+		if (Input.GetKeyDown(HotKeysHelper.Interaction))
+		{
+			Interactive();
+		}
 	}
 	abstract protected void HitStart();
 	abstract protected void HitFinish();
@@ -363,8 +368,91 @@ public abstract class BaseHero : BaseChar
 			InJump = true;
 		}
 	}
+	virtual public void OnCollisionEnter2D(Collision2D collision)
+	{
 
+		if (collision.gameObject.tag == Tags.Enemy.ToString())
+		{
+			Physics2D.IgnoreCollision(collision.collider, downCollider);
+			Physics2D.IgnoreCollision(collision.collider, upCollider);
+
+		}
+	}
+	private void Interactive()
+	{
+		if (interactiveObjects.Count > 0)
+		{
+			for (int i = 0; i < interactiveObjects.Count;)
+			{
+				var item = interactiveObjects[i];
+				if (item == null)
+				{
+					interactiveObjects.Remove(item);
+				}
+				else if (item.transform == null || item.interactive == null)
+				{
+					interactiveObjects.Remove(item);
+				}
+				else
+				{
+					i++;
+				}
+
+			}
+			var minVector = new Vector2(interactiveObjects[0].transform.position.x, interactiveObjects[0].transform.position.y) - new Vector2(transform.position.x, transform.position.y);
+			var closerObj = interactiveObjects[0];
+			for (int i = 1; i < interactiveObjects.Count; i++)
+			{
+				var itemVector = (new Vector2(interactiveObjects[i].transform.position.x, interactiveObjects[i].transform.position.y) - new Vector2(transform.position.x, transform.position.y));
+				if ((itemVector.x+itemVector.y)<  (minVector.x+minVector.y))
+				{
+					minVector = itemVector;
+					closerObj = interactiveObjects[i];
+				}
+			}
+			closerObj.interactive.Use(this);
+		}
+
+	}
+	virtual protected void interactiveObjEnter(Transform interactiveObjTransform, IInteractive interactiveObj)
+	{
+		interactiveObjects.Add(new localInteractiveObject(interactiveObjTransform, interactiveObj));
+	}
+	virtual protected void interactiveObjExit(Transform interactiveObjTransform, IInteractive interactiveObj)
+	{
+		interactiveObjects.Remove(interactiveObjects.Where(x => x.transform == interactiveObjTransform && x.interactive == interactiveObj).FirstOrDefault());
+	}
+	virtual public void OnTriggerEnter2D(Collider2D collision)
+	{
+		var interactiveObj = collision.GetComponent<IInteractive>();
+		if (interactiveObj != null)
+		{
+			interactiveObjEnter(collision.transform, interactiveObj);
+		}
+
+
+	}
+	virtual public void OnTriggerExit2D(Collider2D collision)
+	{
+		var interactiveObj = collision.GetComponent<IInteractive>();
+		if (interactiveObj != null)
+		{
+			interactiveObjExit(collision.transform, interactiveObj);
+		}
+
+	}
+	protected class localInteractiveObject
+	{
+		public Transform transform;
+		public IInteractive interactive;
+		public localInteractiveObject(Transform transform, IInteractive interactive)
+		{
+			this.transform = transform;
+			this.interactive = interactive;
+		}
+	}
 }
+
 
 
 public enum HeroMoveCondition
