@@ -15,7 +15,7 @@ public class Swordsman : BaseHero
 		var projRot = swordSplesh.transform.rotation;
 		var projectile = Instantiate(swordSplesh, this.transform.position, new Quaternion( projRot.x,projRot.y, (spriteRenderer.flipX == true)?180:0,projRot.w));
 		var weapon = projectile.GetComponent<BaseProjectile>();
-		weapon.Damage = damage;
+		weapon.Damage = Damage;
 		weapon.Shooter = gameObject;
 	}
 	
@@ -36,7 +36,6 @@ public class Swordsman : BaseHero
 	protected override void LocalUpdate()
 	{
 	}
-
 
 	
 }

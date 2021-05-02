@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 public class LevelSwichDoor : BaseInteractiveObject
 {
     public int sceneBuilNumber;
+	public string spawnPointName;
+	public LoadSceneMode loadSceneMode= LoadSceneMode.Single;
 	// Start is called before the first frame update
 	public override void Use(BaseHero Sender)
 	{
-		SceneManager.LoadScene(sceneBuilNumber,LoadSceneMode.Single);
+		GameController.gameController.LoadLevel(sceneBuilNumber, spawnPointName, loadSceneMode);
 	}
 }

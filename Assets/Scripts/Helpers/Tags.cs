@@ -12,5 +12,7 @@ public enum Tags
     MainMenu,
     GameInterface,
     Menu,
-    GameController
+    GameController,
+    SpawnPoint,
+    Consumables
 }

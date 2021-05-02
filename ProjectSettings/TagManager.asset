@@ -11,6 +11,8 @@ TagManager:
   - MainMenu
   - GameInterface
   - Menu
+  - SpawnPoint
+  - Consumables
   layers:
   - Default
   - TransparentFX

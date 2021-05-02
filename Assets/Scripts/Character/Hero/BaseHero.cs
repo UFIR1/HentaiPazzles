@@ -371,7 +371,9 @@ public abstract class BaseHero : BaseChar
 	virtual public void OnCollisionEnter2D(Collision2D collision)
 	{
 
-		if (collision.gameObject.tag == Tags.Enemy.ToString())
+		if (collision.gameObject.tag == Tags.Enemy.ToString()
+			||
+			collision.gameObject.tag == Tags.Consumables.ToString())
 		{
 			Physics2D.IgnoreCollision(collision.collider, downCollider);
 			Physics2D.IgnoreCollision(collision.collider, upCollider);
