@@ -299,43 +299,43 @@ public abstract class BaseHero : BaseChar
 	}
 	void KeyEventer()
 	{
-		if (Input.GetKeyDown(HotKeysHelper.MoveRight))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveRight)))
 		{
 			HeroMoveCondition++;
 		}
-		if (Input.GetKeyUp(HotKeysHelper.MoveRight))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveRight)))
 		{
 			HeroMoveCondition--;
 		}
-		if (Input.GetKeyDown(HotKeysHelper.MoveLeft))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveLeft)))
 		{
 			HeroMoveCondition--;
 		}
-		if (Input.GetKeyUp(HotKeysHelper.MoveLeft))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveLeft)))
 		{
 			HeroMoveCondition++;
 		}
-		if (Input.GetKeyDown(HotKeysHelper.MoveUp))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveUp)))
 		{
 			Jump();
 		}
-		if (Input.GetKeyUp(HotKeysHelper.MoveUp))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveUp)))
 		{
 			jumpBlock = false;
 		}
-		if (Input.GetKeyDown(HotKeysHelper.MoveDown))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveDown)))
 		{
 			JumpOff();
 		}
-		if (Input.GetKeyDown(HotKeysHelper.Hit))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.Hit)))
 		{
 			HitStart();
 		}
-		if (Input.GetKeyUp(HotKeysHelper.Hit))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.Hit)))
 		{
 			HitFinish();
 		}
-		if (Input.GetKeyDown(HotKeysHelper.Interaction))
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.Interaction)))
 		{
 			Interactive();
 		}

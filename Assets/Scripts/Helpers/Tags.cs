@@ -7,5 +7,10 @@ public enum Tags
     LevelBorder,
     LevelPlatform,
     Enemy,
-    Player
+    Player,
+    Canvas,
+    MainMenu,
+    GameInterface,
+    Menu,
+    GameController
 }
