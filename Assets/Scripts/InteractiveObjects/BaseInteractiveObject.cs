@@ -9,7 +9,7 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 	public GameObject blankUsableTextObj;
 	protected GameObject usableTextObj;
 	[SerializeField]
-	protected Transform usadTextPlace;
+	protected Transform usedTextPlace;
 	protected TextMeshPro usableTextMesh;
 
 	
@@ -18,7 +18,7 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 	{
 		if (usableTextObj == null)
 		{
-			usableTextObj = Instantiate(blankUsableTextObj, usadTextPlace.position, blankUsableTextObj.transform.rotation, transform);
+			usableTextObj = Instantiate(blankUsableTextObj, usedTextPlace.position, blankUsableTextObj.transform.rotation, transform);
 			usableTextMesh = usableTextObj.GetComponent<TextMeshPro>();
 		}
 		usableTextMesh.text = $"Press {HotKeysHelper.Interaction}\n to interaction";
@@ -50,4 +50,13 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 			NotReadyToUse();
 		}
 	}
+	[System.Serializable]
+	protected  class RandomDropUpSpawnerEvent
+	{
+		public GameObject SpawnConsumable;
+		public int count;
+		public float randomWeight;
+	}
+
+
 }

@@ -168,6 +168,7 @@ public abstract class BaseHero : BaseChar
 	}
 	#endregion
 	protected List<localInteractiveObject> interactiveObjects = new List<localInteractiveObject>();
+	#region mainLogik
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -452,6 +453,29 @@ public abstract class BaseHero : BaseChar
 			this.transform = transform;
 			this.interactive = interactive;
 		}
+	}
+	#endregion
+
+	[SerializeField]
+	private int coins;
+	public int Coins { get => coins; protected set => coins = value; }
+	
+	public bool PayCoins(int quantity)
+	{
+		if(quantity <= coins)
+		{
+			Coins -= quantity;
+			return true;
+		}
+		return false;
+	}
+	public void RaiseCoins(int quantity)
+	{
+		coins += OnRaiseCoins(quantity);
+	}
+	protected virtual int OnRaiseCoins(int quantity)
+	{
+		return quantity;
 	}
 }
 

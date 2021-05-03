@@ -516,6 +516,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2089216817953998229, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
+      propertyPath: coins
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2089216817953998229, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
       propertyPath: maxHeals
       value: 1000
       objectReference: {fileID: 0}
