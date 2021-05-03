@@ -64,7 +64,7 @@ public class GameController : MonoBehaviour
 		{
 			if (Canvas != null)
 			{
-				gameMenuController.SwichMenuActive();
+				gameMenuController.SwitchMenuActive();
 			}
 		}
 	}

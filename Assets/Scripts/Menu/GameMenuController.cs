@@ -14,7 +14,7 @@ public class GameMenuController : MonoBehaviour
 		MainMenu = transform.Find("MainMenu").gameObject;
 		MenuPanels = transform.GetChildrenByTeg(Tags.Menu.ToString());
 	}
-	public void SwichMenuActive()
+	public void SwitchMenuActive()
 	{
 		if (MainMenu.activeSelf)
 		{

@@ -202,24 +202,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 2}
   m_EdgeRadius: 0
---- !u!1 &370664955 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3017648858238936024, guid: fc297b56f8ba4c94583fe545045e9c88,
-    type: 3}
-  m_PrefabInstance: {fileID: 3017648857936168483}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &370664960
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 370664955}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7db5de680aa88e4899bcb779d8a8a9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &788060186
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,6 +441,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2089216816685205545, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 2089216816692192258, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 2089216817287868439, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 2089216817357360808, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 2089216817474823473, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 2089216817906116722, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 2089216817953998218, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
       propertyPath: m_RootOrder
@@ -467,12 +479,12 @@ PrefabInstance:
     - target: {fileID: 2089216817953998218, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.8
+      value: 11.5
       objectReference: {fileID: 0}
     - target: {fileID: 2089216817953998218, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.7
+      value: -0.6
       objectReference: {fileID: 0}
     - target: {fileID: 2089216817953998218, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
@@ -517,7 +529,7 @@ PrefabInstance:
     - target: {fileID: 2089216817953998229, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
       propertyPath: coins
-      value: 2
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2089216817953998229, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
@@ -533,6 +545,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Swordsman
+      objectReference: {fileID: 0}
+    - target: {fileID: 2089216818031203808, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 2089216818071986793, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 64
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2f95c1228d77c84fb1fa71dcd649d08, type: 3}
@@ -603,11 +625,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8864871214153283073, guid: 80f0a59badfb4b44e99bfbe6ca028fd6,
-        type: 3}
-      propertyPath: spawnPointName
-      value: SpawnPoint1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80f0a59badfb4b44e99bfbe6ca028fd6, type: 3}
 --- !u!1001 &3017648857936168483
@@ -617,31 +634,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2699635696400014574, guid: fc297b56f8ba4c94583fe545045e9c88,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 370664960}
-    - target: {fileID: 2699635696400014574, guid: fc297b56f8ba4c94583fe545045e9c88,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SwichMenuActive
-      objectReference: {fileID: 0}
-    - target: {fileID: 2699635696400014574, guid: fc297b56f8ba4c94583fe545045e9c88,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameMenuController, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 2699635696400014574, guid: fc297b56f8ba4c94583fe545045e9c88,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 3017648857037270193, guid: fc297b56f8ba4c94583fe545045e9c88,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3017648858238936024, guid: fc297b56f8ba4c94583fe545045e9c88,
         type: 3}
       propertyPath: m_Name

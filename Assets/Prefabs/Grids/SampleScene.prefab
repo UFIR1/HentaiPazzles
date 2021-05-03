@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2845091181474052717}
   - component: {fileID: 2845091181474052719}
   - component: {fileID: 2845091181474052718}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BackGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5001,7 +5001,7 @@ GameObject:
   - component: {fileID: 2845091181496048643}
   - component: {fileID: 2845091181496048653}
   - component: {fileID: 2845091181496048652}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DecorationForward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5121,7 +5121,7 @@ GameObject:
   - component: {fileID: 2845091181882194261}
   - component: {fileID: 2845091181882194260}
   - component: {fileID: 2845091181882194251}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LevelPlatform
   m_TagString: LevelPlatform
   m_Icon: {fileID: 0}
@@ -5575,8 +5575,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2845091181907601519}
   - component: {fileID: 2845091181907601518}
-  m_Layer: 0
-  m_Name: Grid
+  m_Layer: 6
+  m_Name: SampleScene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5625,7 +5625,7 @@ GameObject:
   - component: {fileID: 2845091183040300817}
   - component: {fileID: 2845091183040300819}
   - component: {fileID: 2845091183040300818}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DecorationBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5902,7 +5902,7 @@ GameObject:
   - component: {fileID: 2845091183365662833}
   - component: {fileID: 2845091183365662835}
   - component: {fileID: 2845091183365662834}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: InteractiveObj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6051,7 +6051,7 @@ GameObject:
   - component: {fileID: 2845091183448082725}
   - component: {fileID: 2845091183448082724}
   - component: {fileID: 2845091183448082779}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LevelBorder
   m_TagString: LevelBorder
   m_Icon: {fileID: 0}
@@ -7641,10 +7641,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6664643816644702058, guid: ba429f15cff36b641903e608a4c21868,
+        type: 3}
+      propertyPath: spawnPointName
+      value: SpawnPoint1
+      objectReference: {fileID: 0}
     - target: {fileID: 6664643816644702059, guid: ba429f15cff36b641903e608a4c21868,
         type: 3}
       propertyPath: m_Name
       value: ScaneLoadedMode
+      objectReference: {fileID: 0}
+    - target: {fileID: 6664643816644702059, guid: ba429f15cff36b641903e608a4c21868,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6664643817389688475, guid: ba429f15cff36b641903e608a4c21868,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ba429f15cff36b641903e608a4c21868, type: 3}

@@ -17,6 +17,14 @@ public abstract class BaseConsumables : MonoBehaviour
 		MyCollider = transform.GetComponents<Collider2D>().Where(x => !x.isTrigger).FirstOrDefault();
 		rigidbody = transform.GetComponent<Rigidbody2D>();
 		MyCollider.enabled = false;
+		if (GameController.gameController.Player != null)
+		{
+			var playerColliders = GameController.gameController.Player.GetComponents<Collider2D>().Where(x=>!x.isTrigger);
+			foreach (var item in playerColliders)
+			{
+				Physics2D.IgnoreCollision(item, MyCollider);
+			}
+		}
 	}
 	private void Update()
 	{

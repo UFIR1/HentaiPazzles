@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Threading;
 
 public class CoinDropUpSpawner : BaseInteractiveObject
 {
@@ -16,14 +17,19 @@ public class CoinDropUpSpawner : BaseInteractiveObject
 
 	[SerializeField]
 	private RandomDropUpSpawnerEvent[] spawnerEvents;
-	
+	[SerializeField]
+	private bool singlton = false;
+	[SerializeField]
+	private float waitBetweenSpawns = 0.5f;
+
+	private bool spawning = false;
 
 
 	public override void Use(BaseHero Sender)
 	{
-		if (Sender.PayCoins(coinCost)&&readyToUse)
+		if (Sender.PayCoins(coinCost) && readyToUse)
 		{
-			var rndMax= spawnerEvents.Sum(x => x.randomWeight);
+			var rndMax = spawnerEvents.Sum(x => x.randomWeight);
 			var randomEventWeight = Random.Range(0, rndMax);
 			foreach (var item in spawnerEvents)
 			{
@@ -36,36 +42,67 @@ public class CoinDropUpSpawner : BaseInteractiveObject
 					break;
 				}
 			}
-			
+
 		}
 	}
 	private void CollingDown()
 	{
 		readyToUse = true;
 	}
-	void StartSpawner(RandomDropUpSpawnerEvent spawnerEvent,BaseHero Sender)
+	void StartSpawner(RandomDropUpSpawnerEvent spawnerEvent, BaseHero Sender)
 	{
 		List<ItemHelper> items = new List<ItemHelper>();
-		
+
 		for (int i = 0; i < spawnerEvent.count; i++)
 		{
-			
-			var item= Instantiate(spawnerEvent.SpawnConsumable, transform.position, spawnerEvent.SpawnConsumable.transform.rotation);
+
+			var item = Instantiate(spawnerEvent.SpawnConsumable, transform.position, spawnerEvent.SpawnConsumable.transform.rotation);
 			item.SetActive(false);
 			items.Add(new ItemHelper() { gameObject = item, rigidbody2D = item.GetComponent<Rigidbody2D>() });
-			
+
 		}
+		
+		if (canUse&&!spawning)
+		{
+			spawning = true;
+			canUse = false;
+			StartCoroutine(Spawn(items));
+		}
+		//foreach (var item in items)
+		//{
+		//	var colliders = item.gameObject.GetComponents<Collider2D>();
+		//	item.gameObject.SetActive(true);
+		//	var rg = item.rigidbody2D;
+		//	var rndForceX = Random.Range(xCorMinRnd, xCorMaxRnd);
+		//	var rndForceY = Random.Range(yCorMinRnd, yCorMaxRnd);
+		//	rg.AddForce(new Vector2(rndForceX, rndForceY), ForceMode2D.Impulse);
+		//	Destroy(item.gameObject, 20);
+		//}
+	}
+	
+	IEnumerator Spawn(List<ItemHelper> items)
+	{
 		foreach (var item in items)
 		{
+
 			var colliders = item.gameObject.GetComponents<Collider2D>();
 			item.gameObject.SetActive(true);
 			var rg = item.rigidbody2D;
 			var rndForceX = Random.Range(xCorMinRnd, xCorMaxRnd);
-			var rndForceY = Random.Range(yCorMinRnd,yCorMaxRnd);
+			var rndForceY = Random.Range(yCorMinRnd, yCorMaxRnd);
 			rg.AddForce(new Vector2(rndForceX, rndForceY), ForceMode2D.Impulse);
 			Destroy(item.gameObject, 20);
+			if (singlton)
+			{
+				yield return new WaitForSeconds(waitBetweenSpawns);
+			}
+			
 		}
+		spawning = false;
+		Unlock(coolDown);
+		yield break;
 	}
+	
 	private class ItemHelper
 	{
 		public GameObject gameObject;

@@ -12,7 +12,9 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 	protected Transform usedTextPlace;
 	protected TextMeshPro usableTextMesh;
 
-	
+	protected bool canUse = true;
+
+
 
 	public virtual void ReadyToUse()
 	{
@@ -49,6 +51,14 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 		{
 			NotReadyToUse();
 		}
+	}
+	protected void Unlock(float timeToUnlock)
+	{
+		Invoke("_Unlock", timeToUnlock);
+	}
+	private void _Unlock()
+	{
+		canUse = true;
 	}
 	[System.Serializable]
 	protected  class RandomDropUpSpawnerEvent

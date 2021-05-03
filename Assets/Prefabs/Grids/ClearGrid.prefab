@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5270890102317420136}
   - component: {fileID: 5270890102317420134}
   - component: {fileID: 5270890102317420137}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DecorationBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,8 +155,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5270890102392618954}
   - component: {fileID: 5270890102392618957}
-  m_Layer: 0
-  m_Name: Grid
+  m_Layer: 6
+  m_Name: ClearGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -205,7 +205,7 @@ GameObject:
   - component: {fileID: 5270890102634277363}
   - component: {fileID: 5270890102634277361}
   - component: {fileID: 5270890102634277360}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BackGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -354,7 +354,7 @@ GameObject:
   - component: {fileID: 5270890102836951480}
   - component: {fileID: 5270890102836951478}
   - component: {fileID: 5270890102836951481}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: InteractiveObj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -502,7 +502,7 @@ GameObject:
   - component: {fileID: 5270890103090286032}
   - component: {fileID: 5270890103090286035}
   - component: {fileID: 5270890103090286034}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LevelBorder
   m_TagString: LevelBorder
   m_Icon: {fileID: 0}
@@ -719,7 +719,7 @@ GameObject:
   - component: {fileID: 5270890103366815115}
   - component: {fileID: 5270890103366815114}
   - component: {fileID: 5270890103366815117}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LevelPlatform
   m_TagString: LevelPlatform
   m_Icon: {fileID: 0}
@@ -890,7 +890,7 @@ GameObject:
   - component: {fileID: 5270890103630159157}
   - component: {fileID: 5270890103630159155}
   - component: {fileID: 5270890103630159154}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DecorationForward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
