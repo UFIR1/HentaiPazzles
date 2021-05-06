@@ -28,7 +28,7 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 	}
 	public virtual void NotReadyToUse()
 	{
-		if (usableTextObj!=null)
+		if (usableTextObj != null)
 		{
 			usableTextObj.SetActive(false);
 		}
@@ -38,7 +38,14 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 
 	}
 
-	virtual public void OnTriggerEnter2D(Collider2D collision)
+	//virtual public void OnTriggerEnter2D(Collider2D collision)
+	//{
+	//	if (collision.GetComponent<BaseHero>() != null)
+	//	{
+	//		ReadyToUse();
+	//	}
+	//}
+	virtual public void OnTriggerStay2D(Collider2D collision)
 	{
 		if (collision.GetComponent<BaseHero>() != null)
 		{
@@ -61,12 +68,21 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 		canUse = true;
 	}
 	[System.Serializable]
-	protected  class RandomDropUpSpawnerEvent
+	protected class RandomDropUpSpawnerEvent
 	{
-		public GameObject SpawnConsumable;
 		public int count;
-		public float randomWeight;
+		public BaseSmartLogic smartLogic;
+		public AnimationCurve randomWeight;
+		public RandomDropUpSpawnerItem[] randomDropUpSpawnerItems;
 	}
-
+	[System.Serializable]
+	protected class RandomDropUpSpawnerItem
+	{
+		public GameObject spawnConsumable;
+		public int count;
+		public BaseSmartLogic smartLogic;
+		public AnimationCurve randomWeight;
+	}
+	
 
 }
