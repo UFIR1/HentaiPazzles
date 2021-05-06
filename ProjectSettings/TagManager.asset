@@ -13,6 +13,7 @@ TagManager:
   - Menu
   - SpawnPoint
   - Consumables
+  - SettingsButton
   layers:
   - Default
   - TransparentFX

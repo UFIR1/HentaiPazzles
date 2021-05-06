@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-        HotKeysHelper.currentInputTipe = InputTipe.Player;
+        HotKeysHelper.currentInputType = InputType.Player;
 		Init();
 	}
 	private void OnLevelWasLoaded(int level)

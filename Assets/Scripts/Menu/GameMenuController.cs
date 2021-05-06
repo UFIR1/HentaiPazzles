@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameMenuController : MonoBehaviour
 {
 	// Start is called before the first frame update
 	GameObject MainMenu;
-	InputTipe LastPlayInputTipe = InputTipe.Player;
+	InputType LastPlayInputTipe = InputType.Player;
 	GameObject[] MenuPanels;
 	float LastTimeScale = 1;
 	private void Start()
@@ -16,22 +17,29 @@ public class GameMenuController : MonoBehaviour
 	}
 	public void SwitchMenuActive()
 	{
-		if (MainMenu.activeSelf)
+		if (CheckActiveMenu())
 		{
 			MainMenu.SetActive(false);
+			foreach (var item in MenuPanels)
+			{
+				item.SetActive(false);
+			}
 			Time.timeScale = LastTimeScale;
-			HotKeysHelper.currentInputTipe = LastPlayInputTipe;
+			HotKeysHelper.currentInputType = LastPlayInputTipe;
 		}
 		else
 		{
-			LastPlayInputTipe = HotKeysHelper.currentInputTipe;
+			LastPlayInputTipe = HotKeysHelper.currentInputType;
 			LastTimeScale = Time.timeScale;
-			foreach (var item in MenuPanels)
-			{
-				item.SetActive(true);
-			}
+			MainMenu.SetActive(true);
+
 			Time.timeScale = 0;
-			HotKeysHelper.currentInputTipe = InputTipe.Global;
+			HotKeysHelper.currentInputType = InputType.Global;
 		}
+	}
+
+	private bool CheckActiveMenu()
+	{
+		return MainMenu.activeSelf || MenuPanels.Where(x=>x.activeSelf==true).Any();
 	}
 }

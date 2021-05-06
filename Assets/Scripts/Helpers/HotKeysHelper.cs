@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class HotKeysHelper
 {
-	public static InputTipe currentInputTipe=InputTipe.Global;
+	public static InputType currentInputType = InputType.Global;
 	public static KeyCode MoveUp { get; set; } = KeyCode.W;
 	public static KeyCode MoveLeft { get; set; } = KeyCode.A;
 	public static KeyCode MoveRight { get; set; } = KeyCode.D;
@@ -15,7 +15,7 @@ public static class HotKeysHelper
 
 	static public bool PlayerKey(bool keyPress)
 	{
-		return (currentInputTipe == InputTipe.Player) && keyPress;
+		return (currentInputType == InputType.Player) && keyPress;
 	}
 	static public bool GlobalKey(bool keyPress)
 	{
@@ -23,13 +23,26 @@ public static class HotKeysHelper
 	}
 	static public bool MenuKey(bool keyPress)
 	{
-		return (currentInputTipe == InputTipe.Menu) && keyPress;
+		return (currentInputType == InputType.Menu) && keyPress;
 	}
-
+	static public bool CurrentKeyCode(out KeyCode? keyCode)
+	{
+		keyCode = null;
+		if (currentInputType == InputType.HotKeySet && Event.current.keyCode != KeyCode.Escape)
+		{
+			if (Event.current.isKey)
+			{
+				keyCode = Event.current.keyCode;
+				return true;
+			}
+		}
+		return false;
+	}
 }
-public enum InputTipe
+public enum InputType
 {
 	Global,
 	Player,
-	Menu
+	Menu,
+	HotKeySet
 }
