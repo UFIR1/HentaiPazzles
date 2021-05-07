@@ -15,5 +15,6 @@ public enum Tags
     GameController,
     SpawnPoint,
     Consumables,
-    SettingsButton
+    SettingsButton,
+    PlayerHud
 }

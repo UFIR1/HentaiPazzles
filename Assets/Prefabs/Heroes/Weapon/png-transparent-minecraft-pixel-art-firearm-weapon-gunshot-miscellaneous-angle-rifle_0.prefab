@@ -130,4 +130,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletSpawnerPoint: {fileID: 7383137645815615592}
   bulletCountPerShot: 5
-  spread: 1
+  spread: 0.17

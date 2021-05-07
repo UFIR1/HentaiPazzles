@@ -5,35 +5,59 @@ using UnityEngine;
 
 public class StoredBullet : BaseConsumables
 {
-	public int maxStuckSize;
-	public int currentCount;
+	private int maxStuckSize = 350;
+	[SerializeField]
+	private int currentCount;
 	public BaseBullet bullet;
+
+	public int MaxStuckSize { get => maxStuckSize; }
+	public int CurrentCount
+	{
+		get => currentCount; 
+		set
+		{
+			if (value > maxStuckSize)
+			{
+				currentCount = maxStuckSize;
+			}
+			else
+			{
+				currentCount = value;
+			}
+			OnCurrentCountChange?.Invoke(currentCount, bullet);
+
+		}
+	}
+	public delegate void OnCurrentCountChangeHandler(int currentCount, BaseBullet currentBullet);
+	public event OnCurrentCountChangeHandler OnCurrentCountChange;
+
 	public StoredBullet Clone(StoredBullet storedBullet)
 	{
 		return new StoredBullet()
 		{
 			maxStuckSize = storedBullet.maxStuckSize,
-			currentCount = storedBullet.currentCount,
+			CurrentCount = storedBullet.CurrentCount,
 			bullet = storedBullet.bullet
 		};
 	}
 
 	protected override bool CanPicUp(BaseHero hero)
 	{
-		var heroBullet = hero.Bullets.Where(x => x.bullet.GetType() == bullet.GetType()).FirstOrDefault();
-		if (heroBullet != null)
-		{
-			if (heroBullet.currentCount < heroBullet.maxStuckSize)
-			{
-				return true;
-			}
-			return false;
-		}
 		return true;
+		//var heroBullet = hero.Bullets.Where(x => x.bullet.GetType() == bullet.GetType()).FirstOrDefault();
+		//if (heroBullet != null)
+		//{
+		//	if (heroBullet.CurrentCount < MaxStuckSize)
+		//	{
+		//		return true;
+		//	}
+		//	return false;
+		//}
+		//return true;
 	}
 
-	protected override void PickUp(BaseHero hero)
+	protected override bool PickUp(BaseHero hero)
 	{
-		hero.PickUpBullet(this);
+		return hero.PickUpBullet(this);
 	}
 }

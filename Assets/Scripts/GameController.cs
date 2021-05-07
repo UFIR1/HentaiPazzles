@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
 {
 	public static GameController gameController;
 	GameObject Canvas;
-	GameMenuController gameMenuController;
+	public GameMenuController gameMenuController;
 	string spawnPointName;
 	public GameObject Player;
 

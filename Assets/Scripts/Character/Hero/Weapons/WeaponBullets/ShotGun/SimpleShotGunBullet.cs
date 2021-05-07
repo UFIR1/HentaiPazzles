@@ -13,7 +13,7 @@ public class SimpleShotGunBullet : BaseBullet
 	public override void OnTriggerEnter2D(Collider2D collision)
 	{
 		BaseChar target = null;
-		if (collision.transform.tag == Tags.Enemy.ToString() && TryGetComponent(out target))
+		if (collision.transform.tag == Tags.Enemy.ToString() && collision.transform.TryGetComponent(out target))
 		{
 			target.DealDamage(gameObject, damage);
 		}

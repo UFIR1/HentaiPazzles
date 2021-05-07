@@ -38,12 +38,14 @@ public abstract class BaseChar : MonoBehaviour
 	{
 		return damage;
 	}
-	public void DealHeal(GameObject Projectile, int heal)
+	public bool DealHeal(GameObject Projectile, int heal)
 	{
 		if (currentHeals < maxHeals)
 		{
 			CurrentHeals += OnHeal(heal);
+			return true;
 		}
+		return false;
 
 	}
 	protected virtual int OnHeal(int heal)

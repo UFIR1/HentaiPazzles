@@ -10,8 +10,8 @@ public class HealedConsumables : BaseConsumables
 		return hero.CurrentHeals < hero.MaxHeals;
 	}
 
-	protected override void PickUp(BaseHero hero)
+	protected override bool PickUp(BaseHero hero)
 	{
-		hero.DealHeal(gameObject,healedHealthCount);
+		return hero.DealHeal(gameObject,healedHealthCount);
 	}
 }

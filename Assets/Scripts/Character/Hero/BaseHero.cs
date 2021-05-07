@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
+using System;
 
 public abstract class BaseHero : BaseChar
 {
@@ -55,6 +56,7 @@ public abstract class BaseHero : BaseChar
 				{
 					animator.SetBool("Run", false);
 				}
+				FlipWeapon(heroMoveCondition);
 			}
 		}
 	}
@@ -152,12 +154,12 @@ public abstract class BaseHero : BaseChar
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-						  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
-						   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+							   /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+								&& overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-						  /* && overallSizeURight.raycast.collider != lastDLeftCollider
-						   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+							   /* && overallSizeURight.raycast.collider != lastDLeftCollider
+								&& overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
@@ -298,7 +300,7 @@ public abstract class BaseHero : BaseChar
 				break;
 		}
 	}
-	
+
 	void JumpOff()
 	{
 		CancelInvoke(nameof(FinishJumpOff));
@@ -314,7 +316,7 @@ public abstract class BaseHero : BaseChar
 	}
 	void Jump()
 	{
-			CancelInvoke("FinishJumpOff");
+		CancelInvoke("FinishJumpOff");
 		CancelInvoke("FinishJump");
 		if (currentJumpCount > 0)
 		{
@@ -363,7 +365,7 @@ public abstract class BaseHero : BaseChar
 			for (int i = 1; i < interactiveObjects.Count; i++)
 			{
 				var itemVector = (new Vector2(interactiveObjects[i].transform.position.x, interactiveObjects[i].transform.position.y) - new Vector2(transform.position.x, transform.position.y));
-				if ((itemVector.x+itemVector.y)<  (minVector.x+minVector.y))
+				if ((itemVector.x + itemVector.y) < (minVector.x + minVector.y))
 				{
 					minVector = itemVector;
 					closerObj = interactiveObjects[i];
@@ -473,7 +475,7 @@ public abstract class BaseHero : BaseChar
 
 	public bool PayCoins(int quantity)
 	{
-		if(quantity <= coins)
+		if (quantity <= coins)
 		{
 			Coins -= quantity;
 			return true;
@@ -492,16 +494,69 @@ public abstract class BaseHero : BaseChar
 
 	#region weaponsAndBullets
 	[SerializeField]
-	protected BaseWeapon[] weapons= new BaseWeapon[3];
+	protected BaseWeapon[] weapons = new BaseWeapon[3];
 	[SerializeField]
-	protected BaseWeapon activeWeapon;
+	private BaseWeapon activeWeapon;
 	protected bool activeWeaponSwitchable = false;
 	protected bool activeWeaponReloading = false;
-
 	private List<StoredBullet> bullets = new List<StoredBullet>();
 	public List<StoredBullet> Bullets { get => bullets; protected set => bullets = value; }
+	protected BaseWeapon ActiveWeapon
+	{
+		get => activeWeapon;
+		set
+		{
+			if (activeWeapon != null)
+			{
+				activeWeapon.gameObject.SetActive(false);
+				activeWeapon.OnMagazineLoadChange -= CurrentMagazineLoadedUpdate;
+			}
+			activeWeapon = value;
+			if (activeWeapon != null)
+			{
+				activeWeapon.gameObject.SetActive(true);
+				activeWeapon.OnMagazineLoadChange += CurrentMagazineLoadedUpdate;
+			}
+		}
+	}
 
-	protected StoredBullet nextReloadBullets =null;
+
+	private void CurrentMagazineLoadedUpdate(int currentMagazineLoaded, BaseBullet currentBullet)
+	{
+		var myScore = Bullets.Where(x => x.bullet.GetType() == currentBullet.GetType()).FirstOrDefault();
+		GameController.gameController.gameMenuController.RepaintBulletState(currentBullet, currentMagazineLoaded, ((myScore.bullet != null) ? myScore.CurrentCount : 0));
+	}
+	private void CurrentBulletsCountUpdate(int currentCount, BaseBullet currentBullet)
+ 	{
+		GameController.gameController.gameMenuController.RepaintBulletState(currentBullet, null, currentCount);
+	}
+
+	private StoredBullet nextReloadBullets = null;
+	protected StoredBullet NextReloadBullets
+	{
+		get => nextReloadBullets;
+		set
+		{
+			try
+			{
+				if (nextReloadBullets.bullet != null)
+				{
+					nextReloadBullets.OnCurrentCountChange -= CurrentBulletsCountUpdate;
+				}
+			}
+			catch { }
+			nextReloadBullets = value;
+			try
+			{
+				if (nextReloadBullets.bullet != null)
+				{
+					nextReloadBullets.OnCurrentCountChange += CurrentBulletsCountUpdate;
+				}
+			}
+			catch { }
+		}
+	}
+
 	//!смена оружия
 	public void SwitchWeapon(int weaponNumber)
 	{
@@ -509,7 +564,14 @@ public abstract class BaseHero : BaseChar
 		{
 			activeWeaponSwitchable = true;
 			Invoke(nameof(activeWeaponSwitchableFinish), weapons[weaponNumber].SwitchableTime);
-			activeWeapon = weapons[weaponNumber];
+			if (activeWeapon != weapons[weaponNumber])
+			{
+				ActiveWeapon = weapons[weaponNumber];
+			}
+			else
+			{
+				ActiveWeapon = null;
+			}
 		}
 	}
 	private void activeWeaponSwitchableFinish()
@@ -519,54 +581,67 @@ public abstract class BaseHero : BaseChar
 	//!Перезарядка
 	public void ReloadWeapon()
 	{
-		if (nextReloadBullets == null)
+		if (ActiveWeapon != null)
 		{
-			nextReloadBullets = Bullets.Where(x => x.bullet?.ownerWeapon?.GetType() == activeWeapon.GetType()).FirstOrDefault();
-		}
-		if (nextReloadBullets?.bullet == null)
-		{
-			return;
-		}
-		if (nextReloadBullets.currentCount > 0)
-		{
-			if (activeWeapon.CurrentMagazineLoaded < activeWeapon.MagazineSize|| activeWeapon.CurrentBullet?.GetType()!=nextReloadBullets.bullet.GetType())
+			if (NextReloadBullets == null)
 			{
-				activeWeaponReloading = true;
-				Invoke(nameof(activeWeaponReloadableFinish), activeWeapon.ReloadTime);
-				var remains = nextReloadBullets.currentCount - activeWeapon.MagazineSize;
-				var toLoad = activeWeapon.MagazineSize +( (remains < 0) ? remains : 0);
-				BaseBullet oldBullet = null;
-				var comeback = activeWeapon.Reload(toLoad, nextReloadBullets.bullet, out oldBullet);
-				if (comeback > 0)
+				NextReloadBullets = Bullets.Where(x => x.bullet?.ownerWeapon?.GetType() == ActiveWeapon.GetType()).FirstOrDefault();
+			}
+			if (NextReloadBullets?.bullet == null)
+			{
+				return;
+			}
+			if (NextReloadBullets.CurrentCount > 0)
+			{
+				if (ActiveWeapon.CurrentMagazineLoaded < ActiveWeapon.MagazineSize || ActiveWeapon.CurrentBullet?.GetType() != NextReloadBullets.bullet.GetType())
 				{
-					if (oldBullet != null)
+					activeWeaponReloading = true;
+					Invoke(nameof(activeWeaponReloadableFinish), ActiveWeapon.ReloadTime);
+					var remains = NextReloadBullets.CurrentCount - ActiveWeapon.MagazineSize;
+					var toLoad = ActiveWeapon.MagazineSize + ((remains < 0) ? remains : 0);
+					BaseBullet oldBullet = null;
+					var comeback = ActiveWeapon.Reload(toLoad, NextReloadBullets.bullet, out oldBullet);
+					if (comeback > 0)
 					{
-						if (nextReloadBullets.bullet.GetType() == oldBullet.GetType())
+						if (oldBullet != null)
 						{
+							if (NextReloadBullets.bullet.GetType() == oldBullet.GetType())
+							{
 
-							toLoad -= comeback;
-						}
-						else
-						{
-							Bullets.Where(x => x.bullet.GetType() == oldBullet.GetType()).FirstOrDefault().currentCount += comeback;
+								toLoad -= comeback;
+							}
+							else
+							{
+								Bullets.Where(x => x.bullet.GetType() == oldBullet.GetType()).FirstOrDefault().CurrentCount += comeback;
+							}
 						}
 					}
+					NextReloadBullets.CurrentCount -= toLoad;
 				}
-				nextReloadBullets.currentCount -= toLoad;
 			}
 		}
 	}
-	public void PickUpBullet(StoredBullet bullet)
+	public bool PickUpBullet(StoredBullet bullet)
 	{
-		var insideBullet = bullets.Where(x=>x.bullet.GetType()==bullet.bullet.GetType()).FirstOrDefault();
-		if (insideBullet?.bullet!=null)
+		var insideBullet = bullets.Where(x => x.bullet.GetType() == bullet.bullet.GetType()).FirstOrDefault();
+		if (insideBullet?.bullet != null)
 		{
-			insideBullet.currentCount += bullet.currentCount;
+			if (insideBullet.CurrentCount < insideBullet.MaxStuckSize)
+			{
+				insideBullet.CurrentCount += bullet.CurrentCount;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		else
 		{
 			bullets.Add(bullet);
+			return true;
 		}
+		return false;
 	}
 	private void activeWeaponReloadableFinish()
 	{
@@ -575,11 +650,34 @@ public abstract class BaseHero : BaseChar
 
 	protected virtual void TriggerDown()
 	{
-		activeWeapon.TriggerDown(this);
+		ActiveWeapon.TriggerDown(this);
 	}
 	protected virtual void TriggerUp()
 	{
-		activeWeapon.TriggerUp(this);
+		ActiveWeapon.TriggerUp(this);
+	}
+	private void FlipWeapon(HeroMoveCondition moveCondition)
+	{
+		if (moveCondition == HeroMoveCondition.left)
+		{
+			foreach (var item in weapons)
+			{
+				if (item != null)
+				{
+					item.transform.localScale = new Vector3(-Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+				}
+			}
+		}
+		if (moveCondition == HeroMoveCondition.right)
+		{
+			foreach (var item in weapons)
+			{
+				if (item != null)
+				{
+					item.transform.localScale = new Vector3(Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+				}
+			}
+		}
 	}
 
 	#endregion

@@ -59,7 +59,8 @@ public class ItemDropUpSpawner : BaseInteractiveObject
 			var randomItemWeight = Random.Range(0, rndMax);
 			foreach (var spawnItem in spawnerEvent.randomDropUpSpawnerItems)
 			{
-				randomItemWeight -= spawnItem.randomWeight.Evaluate(spawnItem.smartLogic.GetWeight(Sender));
+				var preEv = spawnItem.smartLogic.GetWeight(Sender);
+				randomItemWeight -= spawnItem.randomWeight.Evaluate(preEv);
 				if (randomItemWeight <= 0)
 				{
 					for (int s = 0; s < spawnItem.count; s++)
@@ -67,8 +68,9 @@ public class ItemDropUpSpawner : BaseInteractiveObject
 						var item = Instantiate(spawnItem.spawnConsumable, transform.position, spawnItem.spawnConsumable.transform.rotation);
 						item.SetActive(false);
 						items.Add(new ItemHelper() { gameObject = item, rigidbody2D = item.GetComponent<Rigidbody2D>() });
+						
 					}
-
+					break;
 				}
 			}
 		}
