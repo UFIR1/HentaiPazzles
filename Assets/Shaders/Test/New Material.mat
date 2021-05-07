@@ -62,10 +62,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Float_1: 0.442
+    - DestroyForce: -24.76
+    - DestroySize: 0.461
+    - FireProgress: -1.4
+    - Float_1: 0.546
+    - Float_2: 1000
+    - Float_3: 1
+    - Float_4: 0
+    - Float_5: 0
+    - PixelCount: 1000
     - _EnableExternalAlpha: 0
-    - _Float: -25
+    - _Float: -13.9
     m_Colors:
+    - DestroyColor: {r: 1, g: 0.5686275, b: 0, a: 1}
     - _Color: {r: 1, g: 0.3157065, b: 0.031372547, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
