@@ -1,11 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.UIElements;
-using UnityEngine.UIElements;
-using System;
 
 public abstract class BaseHero : BaseChar
 {
@@ -154,12 +150,12 @@ public abstract class BaseHero : BaseChar
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-								/* && overallSizeULeft.raycast.collider != lastDLeftCollider
-								 && overallSizeURight.raycast.collider != lastDRightCollider*/)
+								  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+								   && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-								/* && overallSizeURight.raycast.collider != lastDLeftCollider
-								 && overallSizeURight.raycast.collider != lastDRightCollider*/)
+								  /* && overallSizeURight.raycast.collider != lastDLeftCollider
+								   && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
