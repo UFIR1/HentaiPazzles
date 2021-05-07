@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameMenuController : MonoBehaviour
 {
@@ -47,10 +48,21 @@ public class GameMenuController : MonoBehaviour
 	#endregion
 	#region player
 	public TextMeshProUGUI WeaponStateText;
+	public Image BulletImg;
 	private int lastCurrentMagazineLoaded = 0;
 	private int lastCurrentCount = 0;
+	public void ClearBulletCounter()
+	{
+		WeaponStateText.enabled = false;
+		BulletImg.sprite = null;
+	}
 	public void RepaintBulletState(BaseBullet currentBullet, int? currentMagazineLoaded = null, int? CurrentCoun = null)
 	{
+		if (!WeaponStateText.enabled)
+		{
+			WeaponStateText.enabled = !WeaponStateText.enabled;
+		}
+		BulletImg.sprite = currentBullet.GetComponent<SpriteRenderer>().sprite;
 		if (CurrentCoun != null)
 		{
 			lastCurrentCount = CurrentCoun.Value;

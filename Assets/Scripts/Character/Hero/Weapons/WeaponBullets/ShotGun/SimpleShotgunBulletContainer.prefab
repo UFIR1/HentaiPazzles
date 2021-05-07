@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5992067307371702052}
   - component: {fileID: 5992067307371702051}
   m_Layer: 0
-  m_Name: BulletContainer
+  m_Name: SimpleShotgunBulletContainer
   m_TagString: Consumables
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47fd31bfe6f8b674e8b8cc32dd0cfbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxStuckSize: 360
+  maxStuckSize: 350
   currentCount: 10
   bullet: {fileID: -1210255287142126628, guid: 0b936b719c8c98346bc1919c4a568d30, type: 3}
 --- !u!50 &5992067307371702052

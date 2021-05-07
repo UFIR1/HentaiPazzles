@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleShotGunBullet : BaseBullet
+public class FireShotGunBullet : BaseBullet
 {
 	private void FixedUpdate()
 	{
@@ -18,11 +18,9 @@ public class SimpleShotGunBullet : BaseBullet
 			target.DealDamage(gameObject, damage);
 			base.OnTriggerEnter2D(collision);
 		}
-		if(collision.transform.tag == Tags.LevelBorder.ToString())
+		if (collision.transform.tag == Tags.LevelBorder.ToString())
 		{
 			Destroy(gameObject);
 		}
 	}
-	
-
 }

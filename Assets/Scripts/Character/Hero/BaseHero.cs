@@ -154,12 +154,12 @@ public abstract class BaseHero : BaseChar
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-							   /* && overallSizeULeft.raycast.collider != lastDLeftCollider
-								&& overallSizeURight.raycast.collider != lastDRightCollider*/)
+								/* && overallSizeULeft.raycast.collider != lastDLeftCollider
+								 && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-							   /* && overallSizeURight.raycast.collider != lastDLeftCollider
-								&& overallSizeURight.raycast.collider != lastDRightCollider*/)
+								/* && overallSizeURight.raycast.collider != lastDLeftCollider
+								 && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
@@ -461,6 +461,10 @@ public abstract class BaseHero : BaseChar
 		{
 			ReloadWeapon();
 		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.SwitchBulletType)))
+		{
+			SwitchBulletType();
+		}
 		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.SelectFirstWeapon)))
 		{
 			SwitchWeapon(0);
@@ -510,12 +514,18 @@ public abstract class BaseHero : BaseChar
 			{
 				activeWeapon.gameObject.SetActive(false);
 				activeWeapon.OnMagazineLoadChange -= CurrentMagazineLoadedUpdate;
+				GameController.gameController.gameMenuController.ClearBulletCounter();
 			}
 			activeWeapon = value;
 			if (activeWeapon != null)
 			{
 				activeWeapon.gameObject.SetActive(true);
 				activeWeapon.OnMagazineLoadChange += CurrentMagazineLoadedUpdate;
+				if (NextReloadBullets == null)
+				{
+					NextReloadBullets = bullets.Where(x => x.bullet.ownerWeapon.GetType() == activeWeapon.GetType()).FirstOrDefault();
+					GameController.gameController.gameMenuController.RepaintBulletState(NextReloadBullets.bullet, activeWeapon.CurrentMagazineLoaded, NextReloadBullets.CurrentCount);
+				}
 			}
 		}
 	}
@@ -527,7 +537,7 @@ public abstract class BaseHero : BaseChar
 		GameController.gameController.gameMenuController.RepaintBulletState(currentBullet, currentMagazineLoaded, ((myScore.bullet != null) ? myScore.CurrentCount : 0));
 	}
 	private void CurrentBulletsCountUpdate(int currentCount, BaseBullet currentBullet)
- 	{
+	{
 		GameController.gameController.gameMenuController.RepaintBulletState(currentBullet, null, currentCount);
 	}
 
@@ -551,6 +561,7 @@ public abstract class BaseHero : BaseChar
 				if (nextReloadBullets.bullet != null)
 				{
 					nextReloadBullets.OnCurrentCountChange += CurrentBulletsCountUpdate;
+					GameController.gameController.gameMenuController.RepaintBulletState(nextReloadBullets.bullet, activeWeapon.CurrentMagazineLoaded, NextReloadBullets.CurrentCount);
 				}
 			}
 			catch { }
@@ -583,7 +594,7 @@ public abstract class BaseHero : BaseChar
 	{
 		if (ActiveWeapon != null)
 		{
-			if (NextReloadBullets == null)
+			if (NextReloadBullets.bullet == null)
 			{
 				NextReloadBullets = Bullets.Where(x => x.bullet?.ownerWeapon?.GetType() == ActiveWeapon.GetType()).FirstOrDefault();
 			}
@@ -639,6 +650,12 @@ public abstract class BaseHero : BaseChar
 		else
 		{
 			bullets.Add(bullet);
+			if (activeWeapon?.GetType() == bullet.bullet.ownerWeapon.GetType() && nextReloadBullets.bullet == null)
+			{
+				nextReloadBullets = bullet;
+				GameController.gameController.gameMenuController.RepaintBulletState(bullet.bullet, CurrentCoun: bullet.CurrentCount);
+			}
+
 			return true;
 		}
 		return false;
@@ -675,6 +692,31 @@ public abstract class BaseHero : BaseChar
 				if (item != null)
 				{
 					item.transform.localScale = new Vector3(Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+				}
+			}
+		}
+	}
+	public void SwitchBulletType()
+	{
+		if (activeWeapon != null)
+		{
+			var allBulletTypes = Bullets.Where(x => x.bullet.ownerWeapon.GetType() == activeWeapon.GetType()).ToList();
+			if (allBulletTypes.Count() > 1)
+			{
+				for (int i = 0; i < allBulletTypes.Count(); i++)
+				{
+					if (allBulletTypes[i].bullet.GetType() == NextReloadBullets.bullet.GetType())
+					{
+						if (i == allBulletTypes.Count() - 1)
+						{
+							NextReloadBullets = allBulletTypes[0];
+							break;
+						}
+						NextReloadBullets = allBulletTypes[i + 1];
+						break;
+					}
+
+
 				}
 			}
 		}

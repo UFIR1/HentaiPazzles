@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class StoredBullet : BaseConsumables
 {
+	[SerializeField]
 	private int maxStuckSize = 350;
 	[SerializeField]
 	private int currentCount;

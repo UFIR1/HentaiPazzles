@@ -37,6 +37,7 @@ public abstract class BaseBullet : MonoBehaviour
 		var body = collision.transform.GetComponent<Rigidbody2D>();
 		var vector = (Vector2)body.transform.position - (Vector2)collision.ClosestPoint(transform.position);
 		body.AddForce(vector.normalized * force, ForceMode2D.Impulse);
+		Destroy(gameObject);
 	}
 
 }
