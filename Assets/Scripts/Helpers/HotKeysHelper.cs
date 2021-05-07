@@ -12,6 +12,8 @@ public static class HotKeysHelper
 	public static KeyCode MoveDown { get; set; } = KeyCode.S;
 	public static KeyCode Hit { get; set; } = KeyCode.Space;
 	public static KeyCode Interaction { get; set; } = KeyCode.E;
+	public static KeyCode Reload { get; set; } = KeyCode.R;
+	public static KeyCode SelectFirstWeapon { get; set; } = KeyCode.Alpha1;
 
 	static public bool PlayerKey(bool keyPress)
 	{

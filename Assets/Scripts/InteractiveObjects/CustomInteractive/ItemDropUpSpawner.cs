@@ -38,7 +38,7 @@ public class ItemDropUpSpawner : BaseInteractiveObject
 				{
 					StartSpawner(item, Sender);
 					readyToUse = false;
-					Invoke("CollingDown", coolDown);
+					Invoke(nameof(CollingDown), coolDown);
 					break;
 				}
 			}

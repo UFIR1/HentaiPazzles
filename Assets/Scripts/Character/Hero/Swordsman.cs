@@ -5,26 +5,6 @@ using UnityEngine.Events;
 
 public class Swordsman : BaseHero
 {
-	public GameObject swordSplesh;
-	protected override void HitStart()
-	{
-		animator.Play("MiliHit");
-		
-		
-		
-		var projRot = swordSplesh.transform.rotation;
-		var projectile = Instantiate(swordSplesh, this.transform.position, new Quaternion( projRot.x,projRot.y, (spriteRenderer.flipX == true)?180:0,projRot.w));
-		var weapon = projectile.GetComponent<BaseProjectile>();
-		weapon.Damage = Damage;
-		weapon.Shooter = gameObject;
-	}
-	
-
-	protected override void HitFinish()
-	{
-		
-	}
-
 	protected override void LocalFixedUpdate()
 	{
 	}

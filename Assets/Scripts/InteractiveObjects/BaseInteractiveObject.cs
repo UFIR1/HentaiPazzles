@@ -61,7 +61,7 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 	}
 	protected void Unlock(float timeToUnlock)
 	{
-		Invoke("_Unlock", timeToUnlock);
+		Invoke(nameof(_Unlock), timeToUnlock);
 	}
 	private void _Unlock()
 	{
