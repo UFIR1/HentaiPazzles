@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material
+  m_Name: EnemyMaterial
   m_Shader: {fileID: -6465566751694194690, guid: e10ccf13f87f0c143be64c2b9c692d75,
     type: 3}
   m_ShaderKeywords: 
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - LvelSetUp1:
-        m_Texture: {fileID: 2800000, guid: fa4e5bd2ebbc4314cb5e5dcf1be14eb2, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - NormalMap:
@@ -29,7 +29,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture:
-        m_Texture: {fileID: 2800000, guid: fa4e5bd2ebbc4314cb5e5dcf1be14eb2, type: 3}
+        m_Texture: {fileID: 2800000, guid: d336ba5ad77257d41869988cd50978e8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _AlphaTex:
@@ -37,14 +37,22 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: d336ba5ad77257d41869988cd50978e8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NormalFromTexture_0c99c74424124a1a8272b2ab59ffd5ca_Texture_0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _NormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_05391e3903de4b829cf3e91f5cfaea71_Texture_1:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -57,7 +65,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture2D:
-        m_Texture: {fileID: 2800000, guid: fa4e5bd2ebbc4314cb5e5dcf1be14eb2, type: 3}
+        m_Texture: {fileID: 2800000, guid: d336ba5ad77257d41869988cd50978e8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture2DAsset_1182a1c8908f428ebebfea42eb751401_Out_0:
@@ -79,21 +87,15 @@ Material:
     m_Ints: []
     m_Floats:
     - DestroyForce: -25
-    - DestroySize: 0.461
-    - FireProgress: -1.4
-    - Float_1: 0.546
-    - Float_2: 1000
-    - Float_3: 1
-    - Float_4: 0
-    - Float_5: 0
-    - HaveNormalMap: 1
+    - DestroySize: 0.523
+    - HaveNormalMap: 0
     - Noise_size: 500
     - PixelCount: 1000
     - _EnableExternalAlpha: 0
-    - _Float: 0.703
+    - _Float: 0.8
     m_Colors:
-    - DestroyColor: {r: 1, g: 0.31488836, b: 0, a: 1}
-    - _Color: {r: 1, g: 0.3157065, b: 0.031372547, a: 1}
+    - DestroyColor: {r: 1, g: 0.5686275, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
