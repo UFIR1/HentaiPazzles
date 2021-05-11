@@ -7,7 +7,7 @@ public abstract class BaseConsumables : MonoBehaviour
 {
 	bool pickUped=false;
 	protected abstract bool CanPicUp(BaseHero hero);
-	protected abstract void PickUp(BaseHero hero);
+	protected abstract bool PickUp(BaseHero hero);
 	private Collider2D MyCollider;
 	private Rigidbody2D rigidbody;
 	private bool OnGround=false;
@@ -45,9 +45,12 @@ public abstract class BaseConsumables : MonoBehaviour
 			{
 				if (CanPicUp(hero) && !pickUped)
 				{
-					pickUped = true;
-					PickUp(hero);
-					Destroy(gameObject);
+					
+					if (PickUp(hero))
+					{
+						pickUped = true;
+						Destroy(gameObject);
+					}
 				}
 			}
 		}

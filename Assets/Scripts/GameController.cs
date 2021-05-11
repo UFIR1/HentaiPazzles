@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
 {
 	public static GameController gameController;
 	GameObject Canvas;
-	GameMenuController gameMenuController;
+	public GameMenuController gameMenuController;
 	string spawnPointName;
 	public GameObject Player;
 
@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-        HotKeysHelper.currentInputTipe = InputTipe.Player;
+        HotKeysHelper.currentInputType = InputType.Player;
 		Init();
 	}
 	private void OnLevelWasLoaded(int level)

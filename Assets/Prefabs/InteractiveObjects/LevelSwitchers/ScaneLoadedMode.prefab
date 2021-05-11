@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6664643816644702052}
   - component: {fileID: 6664643816644702053}
-  - component: {fileID: 6664643816644702058}
+  - component: {fileID: 4653095743923374954}
   - component: {fileID: 82507610060894757}
   m_Layer: 0
   m_Name: ScaneLoadedMode
@@ -87,7 +87,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6664643816644702058
+--- !u!114 &4653095743923374954
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,8 +101,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blankUsableTextObj: {fileID: 5561095084689968813, guid: c1e9c8306cae0784e8e7b4174ad9705b,
     type: 3}
-  usadTextPlace: {fileID: 6664643817389688474}
-  sceneBuilNumber: 1
+  usedTextPlace: {fileID: 6664643817389688474}
+  sceneBuildNumber: 1
+  spawnPointName: SpawnPoint1
+  loadSceneMode: 0
 --- !u!61 &82507610060894757
 BoxCollider2D:
   m_ObjectHideFlags: 0

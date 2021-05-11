@@ -13,6 +13,8 @@ TagManager:
   - Menu
   - SpawnPoint
   - Consumables
+  - SettingsButton
+  - PlayerHud
   layers:
   - Default
   - TransparentFX

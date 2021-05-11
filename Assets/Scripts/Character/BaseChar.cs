@@ -11,7 +11,21 @@ public abstract class BaseChar : MonoBehaviour
 	[SerializeField]
 	private int damage;
 
-	public int CurrentHeals { get => currentHeals; protected set => currentHeals = value; }
+	public int CurrentHeals
+	{
+		get => currentHeals; 
+		protected set
+		{
+			if (value < maxHeals)
+			{
+				currentHeals = value;
+			}
+			else
+			{
+				currentHeals = maxHeals;
+			}
+		}
+	}
 	public int Damage { get => damage; protected set => damage = value; }
 	public int MaxHeals { get => maxHeals; protected set => maxHeals = value; }
 
@@ -20,16 +34,18 @@ public abstract class BaseChar : MonoBehaviour
 		CurrentHeals -= OnDamage(damage);
 
 	}
-    protected virtual int OnDamage(int damage)
+	protected virtual int OnDamage(int damage)
 	{
 		return damage;
 	}
-	public void DealHeal(GameObject Projectile, int heal)
+	public bool DealHeal(GameObject Projectile, int heal)
 	{
 		if (currentHeals < maxHeals)
 		{
 			CurrentHeals += OnHeal(heal);
+			return true;
 		}
+		return false;
 
 	}
 	protected virtual int OnHeal(int heal)

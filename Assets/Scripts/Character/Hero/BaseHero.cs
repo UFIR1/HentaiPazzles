@@ -1,10 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.UIElements;
-using UnityEngine.UIElements;
 
 public abstract class BaseHero : BaseChar
 {
@@ -55,6 +52,7 @@ public abstract class BaseHero : BaseChar
 				{
 					animator.SetBool("Run", false);
 				}
+				FlipWeapon(heroMoveCondition);
 			}
 		}
 	}
@@ -63,7 +61,7 @@ public abstract class BaseHero : BaseChar
 	protected float speed = 5.5f;
 	[SerializeField]
 	//[TutInput]
-	protected float jumpForse = 1f;
+	protected float jumpForce = 1f;
 	[SerializeField]
 	//[TutInput]
 	protected int jumpCount = 2;
@@ -100,7 +98,7 @@ public abstract class BaseHero : BaseChar
 
 					upCollider.enabled = !value;
 
-					InvokeRepeating("FinishJump", 0.3f, 0.1f);
+					InvokeRepeating(nameof(FinishJump), 0.3f, 0.1f);
 				}
 			}
 			if (animator != null)
@@ -118,7 +116,7 @@ public abstract class BaseHero : BaseChar
 			if (!InJump)
 			{
 				upCollider.enabled = true;
-				CancelInvoke("FinishJump");
+				CancelInvoke(nameof(FinishJump));
 			}
 		}
 	}
@@ -137,7 +135,7 @@ public abstract class BaseHero : BaseChar
 			{
 				upCollider.enabled = false;
 			}
-			InvokeRepeating("FinishJumpOff", 0.3f, 0.1f);
+			InvokeRepeating(nameof(FinishJumpOff), 0.3f, 0.1f);
 
 
 		}
@@ -152,23 +150,23 @@ public abstract class BaseHero : BaseChar
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-						  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
-						   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+								  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+								   && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-						  /* && overallSizeURight.raycast.collider != lastDLeftCollider
-						   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+								  /* && overallSizeURight.raycast.collider != lastDLeftCollider
+								   && overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
 
-			CancelInvoke("FinishJumpOff");
+			CancelInvoke(nameof(FinishJumpOff));
 		}
 
 	}
 	#endregion
 	protected List<localInteractiveObject> interactiveObjects = new List<localInteractiveObject>();
-	#region mainLogik
+	#region mainLogic
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -298,55 +296,11 @@ public abstract class BaseHero : BaseChar
 				break;
 		}
 	}
-	void KeyEventer()
-	{
-		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveRight)))
-		{
-			HeroMoveCondition++;
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveRight)))
-		{
-			HeroMoveCondition--;
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveLeft)))
-		{
-			HeroMoveCondition--;
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveLeft)))
-		{
-			HeroMoveCondition++;
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveUp)))
-		{
-			Jump();
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveUp)))
-		{
-			jumpBlock = false;
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveDown)))
-		{
-			JumpOff();
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.Hit)))
-		{
-			HitStart();
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.Hit)))
-		{
-			HitFinish();
-		}
-		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.Interaction)))
-		{
-			Interactive();
-		}
-	}
-	abstract protected void HitStart();
-	abstract protected void HitFinish();
+
 	void JumpOff()
 	{
-		CancelInvoke("FinishJumpOff");
-		CancelInvoke("FinishJump");
+		CancelInvoke(nameof(FinishJumpOff));
+		CancelInvoke(nameof(FinishJump));
 		lastDLeftCollider = overallSizeDLeft.raycast.collider;
 		lastDRightCollider = overallSizeDRight.raycast.collider;
 		if (lastDLeftCollider?.tag != Tags.LevelBorder.ToString() && lastDRightCollider?.tag != Tags.LevelBorder.ToString())
@@ -363,7 +317,7 @@ public abstract class BaseHero : BaseChar
 		if (currentJumpCount > 0)
 		{
 			rigidbody.velocity = Vector2.zero;
-			rigidbody.AddForce(Vector2.up * jumpForse, ForceMode2D.Impulse);
+			rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 			currentJumpCount--;
 			jumpBlock = true;
 			InJump = true;
@@ -407,7 +361,7 @@ public abstract class BaseHero : BaseChar
 			for (int i = 1; i < interactiveObjects.Count; i++)
 			{
 				var itemVector = (new Vector2(interactiveObjects[i].transform.position.x, interactiveObjects[i].transform.position.y) - new Vector2(transform.position.x, transform.position.y));
-				if ((itemVector.x+itemVector.y)<  (minVector.x+minVector.y))
+				if ((itemVector.x + itemVector.y) < (minVector.x + minVector.y))
 				{
 					minVector = itemVector;
 					closerObj = interactiveObjects[i];
@@ -456,13 +410,72 @@ public abstract class BaseHero : BaseChar
 	}
 	#endregion
 
+	#region keys
+	void KeyEventer()
+	{
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveRight)))
+		{
+			HeroMoveCondition++;
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveRight)))
+		{
+			HeroMoveCondition--;
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveLeft)))
+		{
+			HeroMoveCondition--;
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveLeft)))
+		{
+			HeroMoveCondition++;
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveUp)))
+		{
+			Jump();
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.MoveUp)))
+		{
+			jumpBlock = false;
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.MoveDown)))
+		{
+			JumpOff();
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.Hit)))
+		{
+			TriggerDown();
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyUp(HotKeysHelper.Hit)))
+		{
+			TriggerUp();
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.Interaction)))
+		{
+			Interactive();
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.Reload)))
+		{
+			ReloadWeapon();
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.SwitchBulletType)))
+		{
+			SwitchBulletType();
+		}
+		if (HotKeysHelper.PlayerKey(Input.GetKeyDown(HotKeysHelper.SelectFirstWeapon)))
+		{
+			SwitchWeapon(0);
+		}
+	}
+	#endregion
+
+	#region coins
 	[SerializeField]
 	private int coins;
 	public int Coins { get => coins; protected set => coins = value; }
-	
+
 	public bool PayCoins(int quantity)
 	{
-		if(quantity <= coins)
+		if (quantity <= coins)
 		{
 			Coins -= quantity;
 			return true;
@@ -477,6 +490,239 @@ public abstract class BaseHero : BaseChar
 	{
 		return quantity;
 	}
+	#endregion
+
+	#region weaponsAndBullets
+	[SerializeField]
+	protected BaseWeapon[] weapons = new BaseWeapon[3];
+	[SerializeField]
+	private BaseWeapon activeWeapon;
+	protected bool activeWeaponSwitchable = false;
+	protected bool activeWeaponReloading = false;
+	private List<StoredBullet> bullets = new List<StoredBullet>();
+	public List<StoredBullet> Bullets { get => bullets; protected set => bullets = value; }
+	protected BaseWeapon ActiveWeapon
+	{
+		get => activeWeapon;
+		set
+		{
+			if (activeWeapon != null)
+			{
+				activeWeapon.gameObject.SetActive(false);
+				activeWeapon.OnMagazineLoadChange -= CurrentMagazineLoadedUpdate;
+				GameController.gameController.gameMenuController.ClearBulletCounter();
+			}
+			activeWeapon = value;
+			if (activeWeapon != null)
+			{
+				activeWeapon.gameObject.SetActive(true);
+				activeWeapon.OnMagazineLoadChange += CurrentMagazineLoadedUpdate;
+				if (NextReloadBullets?.bullet == null)
+				{
+					NextReloadBullets = bullets.Where(x => x.bullet.ownerWeapon.GetType() == activeWeapon.GetType()).FirstOrDefault();
+				}
+				if (NextReloadBullets?.bullet != null)
+				{
+					GameController.gameController.gameMenuController.RepaintBulletState(NextReloadBullets.bullet, activeWeapon.CurrentMagazineLoaded, NextReloadBullets.CurrentCount);
+				}
+			}
+		}
+	}
+
+
+	private void CurrentMagazineLoadedUpdate(int currentMagazineLoaded, BaseBullet currentBullet)
+	{
+		var myScore = Bullets.Where(x => x.bullet.GetType() == currentBullet.GetType()).FirstOrDefault();
+		GameController.gameController.gameMenuController.RepaintBulletState(currentBullet, currentMagazineLoaded, ((myScore.bullet != null) ? myScore.CurrentCount : 0));
+	}
+	private void CurrentBulletsCountUpdate(int currentCount, BaseBullet currentBullet)
+	{
+		GameController.gameController.gameMenuController.RepaintBulletState(currentBullet, null, currentCount);
+	}
+
+	private StoredBullet nextReloadBullets = null;
+	protected StoredBullet NextReloadBullets
+	{
+		get => nextReloadBullets;
+		set
+		{
+			try
+			{
+				if (nextReloadBullets.bullet != null)
+				{
+					nextReloadBullets.OnCurrentCountChange -= CurrentBulletsCountUpdate;
+				}
+			}
+			catch { }
+			nextReloadBullets = value;
+			try
+			{
+				if (nextReloadBullets.bullet != null)
+				{
+					nextReloadBullets.OnCurrentCountChange += CurrentBulletsCountUpdate;
+					GameController.gameController.gameMenuController.RepaintBulletState(nextReloadBullets.bullet, activeWeapon.CurrentMagazineLoaded, NextReloadBullets.CurrentCount);
+				}
+			}
+			catch { }
+		}
+	}
+
+	//!смена оружия
+	public void SwitchWeapon(int weaponNumber)
+	{
+		if (weapons[weaponNumber] != null)
+		{
+			activeWeaponSwitchable = true;
+			Invoke(nameof(activeWeaponSwitchableFinish), weapons[weaponNumber].SwitchableTime);
+			if (activeWeapon != weapons[weaponNumber])
+			{
+				ActiveWeapon = weapons[weaponNumber];
+			}
+			else
+			{
+				ActiveWeapon = null;
+			}
+		}
+	}
+	private void activeWeaponSwitchableFinish()
+	{
+		activeWeaponSwitchable = false;
+	}
+	//!Перезарядка
+	public void ReloadWeapon()
+	{
+		if (ActiveWeapon != null)
+		{
+			if (NextReloadBullets.bullet == null)
+			{
+				NextReloadBullets = Bullets.Where(x => x.bullet?.ownerWeapon?.GetType() == ActiveWeapon.GetType()).FirstOrDefault();
+			}
+			if (NextReloadBullets?.bullet == null)
+			{
+				return;
+			}
+			if (NextReloadBullets.CurrentCount > 0)
+			{
+				if (ActiveWeapon.CurrentMagazineLoaded < ActiveWeapon.MagazineSize || ActiveWeapon.CurrentBullet?.GetType() != NextReloadBullets.bullet.GetType())
+				{
+					activeWeaponReloading = true;
+					Invoke(nameof(activeWeaponReloadableFinish), ActiveWeapon.ReloadTime);
+					var remains = NextReloadBullets.CurrentCount - ActiveWeapon.MagazineSize;
+					var toLoad = ActiveWeapon.MagazineSize + ((remains < 0) ? remains : 0);
+					BaseBullet oldBullet = null;
+					var comeback = ActiveWeapon.Reload(toLoad, NextReloadBullets.bullet, out oldBullet);
+					if (comeback > 0)
+					{
+						if (oldBullet != null)
+						{
+							if (NextReloadBullets.bullet.GetType() == oldBullet.GetType())
+							{
+
+								toLoad -= comeback;
+							}
+							else
+							{
+								Bullets.Where(x => x.bullet.GetType() == oldBullet.GetType()).FirstOrDefault().CurrentCount += comeback;
+							}
+						}
+					}
+					NextReloadBullets.CurrentCount -= toLoad;
+				}
+			}
+		}
+	}
+	public bool PickUpBullet(StoredBullet bullet)
+	{
+		var insideBullet = bullets.Where(x => x.bullet.GetType() == bullet.bullet.GetType()).FirstOrDefault();
+		if (insideBullet?.bullet != null)
+		{
+			if (insideBullet.CurrentCount < insideBullet.MaxStuckSize)
+			{
+				insideBullet.CurrentCount += bullet.CurrentCount;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			bullets.Add(bullet);
+			if (activeWeapon?.GetType() == bullet.bullet.ownerWeapon.GetType() && nextReloadBullets?.bullet == null)
+			{
+				NextReloadBullets = bullet;
+				GameController.gameController.gameMenuController.RepaintBulletState(bullet.bullet, CurrentCoun: bullet.CurrentCount);
+			}
+
+			return true;
+		}
+		return false;
+	}
+	private void activeWeaponReloadableFinish()
+	{
+		activeWeaponReloading = false;
+	}
+
+	protected virtual void TriggerDown()
+	{
+		ActiveWeapon?.TriggerDown(this);
+	}
+	protected virtual void TriggerUp()
+	{
+		ActiveWeapon?.TriggerUp(this);
+	}
+	private void FlipWeapon(HeroMoveCondition moveCondition)
+	{
+		if (moveCondition == HeroMoveCondition.left)
+		{
+			foreach (var item in weapons)
+			{
+				if (item != null)
+				{
+					item.transform.localScale = new Vector3(-Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+				}
+			}
+		}
+		if (moveCondition == HeroMoveCondition.right)
+		{
+			foreach (var item in weapons)
+			{
+				if (item != null)
+				{
+					item.transform.localScale = new Vector3(Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+				}
+			}
+		}
+	}
+	public void SwitchBulletType()
+	{
+		if (activeWeapon != null)
+		{
+			var allBulletTypes = Bullets.Where(x => x.bullet.ownerWeapon.GetType() == activeWeapon.GetType()).ToList();
+			if (allBulletTypes.Count() > 1)
+			{
+				for (int i = 0; i < allBulletTypes.Count(); i++)
+				{
+					if (allBulletTypes[i].bullet.GetType() == NextReloadBullets.bullet.GetType())
+					{
+						if (i == allBulletTypes.Count() - 1)
+						{
+							NextReloadBullets = allBulletTypes[0];
+							break;
+						}
+						NextReloadBullets = allBulletTypes[i + 1];
+						break;
+					}
+
+
+				}
+			}
+		}
+	}
+
+	#endregion
+
 }
 
 

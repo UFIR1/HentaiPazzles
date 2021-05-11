@@ -14,5 +14,7 @@ public enum Tags
     Menu,
     GameController,
     SpawnPoint,
-    Consumables
+    Consumables,
+    SettingsButton,
+    PlayerHud
 }
