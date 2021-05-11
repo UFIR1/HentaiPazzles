@@ -517,9 +517,12 @@ public abstract class BaseHero : BaseChar
 			{
 				activeWeapon.gameObject.SetActive(true);
 				activeWeapon.OnMagazineLoadChange += CurrentMagazineLoadedUpdate;
-				if (NextReloadBullets == null)
+				if (NextReloadBullets?.bullet == null)
 				{
 					NextReloadBullets = bullets.Where(x => x.bullet.ownerWeapon.GetType() == activeWeapon.GetType()).FirstOrDefault();
+				}
+				if (NextReloadBullets?.bullet != null)
+				{
 					GameController.gameController.gameMenuController.RepaintBulletState(NextReloadBullets.bullet, activeWeapon.CurrentMagazineLoaded, NextReloadBullets.CurrentCount);
 				}
 			}
@@ -646,9 +649,9 @@ public abstract class BaseHero : BaseChar
 		else
 		{
 			bullets.Add(bullet);
-			if (activeWeapon?.GetType() == bullet.bullet.ownerWeapon.GetType() && nextReloadBullets.bullet == null)
+			if (activeWeapon?.GetType() == bullet.bullet.ownerWeapon.GetType() && nextReloadBullets?.bullet == null)
 			{
-				nextReloadBullets = bullet;
+				NextReloadBullets = bullet;
 				GameController.gameController.gameMenuController.RepaintBulletState(bullet.bullet, CurrentCoun: bullet.CurrentCount);
 			}
 
@@ -663,11 +666,11 @@ public abstract class BaseHero : BaseChar
 
 	protected virtual void TriggerDown()
 	{
-		ActiveWeapon.TriggerDown(this);
+		ActiveWeapon?.TriggerDown(this);
 	}
 	protected virtual void TriggerUp()
 	{
-		ActiveWeapon.TriggerUp(this);
+		ActiveWeapon?.TriggerUp(this);
 	}
 	private void FlipWeapon(HeroMoveCondition moveCondition)
 	{
