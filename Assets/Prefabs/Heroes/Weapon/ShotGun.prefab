@@ -40,9 +40,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7383137646228710028}
   - component: {fileID: 7383137646228710029}
-  - component: {fileID: 7383137646228710031}
+  - component: {fileID: 4008512334954954040}
   m_Layer: 0
-  m_Name: png-transparent-minecraft-pixel-art-firearm-weapon-gunshot-miscellaneous-angle-rifle_0
+  m_Name: ShotGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,7 +57,7 @@ Transform:
   m_GameObject: {fileID: 7383137646228710026}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.17000008, y: 0.120000005, z: 0}
-  m_LocalScale: {x: 0.20329563, y: 0.20329563, z: 0.20329563}
+  m_LocalScale: {x: -0.20329563, y: 0.20329563, z: 0}
   m_Children:
   - {fileID: 7383137645815615595}
   m_Father: {fileID: 0}
@@ -116,7 +116,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7383137646228710031
+--- !u!114 &4008512334954954040
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,4 +130,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletSpawnerPoint: {fileID: 7383137645815615592}
   bulletCountPerShot: 5
-  spread: 0.17
+  spread: 0.24

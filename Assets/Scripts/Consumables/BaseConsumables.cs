@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
+
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 
 public abstract class BaseConsumables : MonoBehaviour
 {
@@ -48,13 +52,19 @@ public abstract class BaseConsumables : MonoBehaviour
 					
 					if (PickUp(hero))
 					{
-						pickUped = true;
-						Destroy(gameObject);
+						OnPickUp();
 					}
 				}
 			}
 		}
 	}
+
+	protected void OnPickUp()
+	{
+		pickUped = true;
+		Destroy(gameObject);
+	}
+
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
 		if (collision.transform.tag == Tags.Consumables.ToString() || collision.transform.tag == Tags.Player.ToString())

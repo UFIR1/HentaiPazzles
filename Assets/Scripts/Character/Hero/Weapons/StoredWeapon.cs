@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
-public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
+public class StoredWeapon : BaseConsumables, IInteractive
 {
+
 	[SerializeField]
 	public GameObject blankUsableTextObj;
 	protected GameObject usableTextObj;
@@ -12,10 +13,8 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 	protected Transform usedTextPlace;
 	protected TextMeshPro usableTextMesh;
 
-	protected bool canUse = true;
-
-
-
+	public BaseWeapon weapon;
+	public int weaponSlotNumber;
 	public virtual void OnReadyToUse()
 	{
 		if (usableTextObj == null)
@@ -33,18 +32,25 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 			usableTextObj.SetActive(false);
 		}
 	}
-	public virtual void Use(BaseHero Sender)
-	{
 
+	public void Use(BaseHero Sender)
+	{
+		if (PickUp(Sender))
+		{
+			OnPickUp();
+		}
 	}
 
-	//virtual public void OnTriggerEnter2D(Collider2D collision)
-	//{
-	//	if (collision.GetComponent<BaseHero>() != null)
-	//	{
-	//		ReadyToUse();
-	//	}
-	//}
+	protected override bool CanPicUp(BaseHero hero)
+	{
+		return false;
+	}
+
+	protected override bool PickUp(BaseHero hero)
+	{
+		return hero.PickUpWeapon(weapon,weaponSlotNumber);
+	}
+
 	virtual public void OnTriggerStay2D(Collider2D collision)
 	{
 		if (collision.GetComponent<BaseHero>() != null)
@@ -59,30 +65,4 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 			OnNotReadyToUse();
 		}
 	}
-	protected void Unlock(float timeToUnlock)
-	{
-		Invoke(nameof(_Unlock), timeToUnlock);
-	}
-	private void _Unlock()
-	{
-		canUse = true;
-	}
-	[System.Serializable]
-	protected class RandomDropUpSpawnerEvent
-	{
-		public int count;
-		public BaseSmartLogic smartLogic;
-		public AnimationCurve randomWeight;
-		public RandomDropUpSpawnerItem[] randomDropUpSpawnerItems;
-	}
-	[System.Serializable]
-	protected class RandomDropUpSpawnerItem
-	{
-		public GameObject spawnConsumable;
-		public int count;
-		public BaseSmartLogic smartLogic;
-		public AnimationCurve randomWeight;
-	}
-	
-
 }

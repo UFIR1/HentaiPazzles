@@ -494,7 +494,7 @@ public abstract class BaseHero : BaseChar
 
 	#region weaponsAndBullets
 	[SerializeField]
-	protected BaseWeapon[] weapons = new BaseWeapon[3];
+	protected InventoryWeapon[] weapons = new InventoryWeapon[3];
 	[SerializeField]
 	private BaseWeapon activeWeapon;
 	protected bool activeWeaponSwitchable = false;
@@ -570,13 +570,13 @@ public abstract class BaseHero : BaseChar
 	//!смена оружия
 	public void SwitchWeapon(int weaponNumber)
 	{
-		if (weapons[weaponNumber] != null)
+		if (weapons[weaponNumber] != null && weapons[weaponNumber]?.unlock==true)
 		{
 			activeWeaponSwitchable = true;
-			Invoke(nameof(activeWeaponSwitchableFinish), weapons[weaponNumber].SwitchableTime);
-			if (activeWeapon != weapons[weaponNumber])
+			Invoke(nameof(activeWeaponSwitchableFinish), weapons[weaponNumber].weapon.SwitchableTime);
+			if (activeWeapon != weapons[weaponNumber].weapon)
 			{
-				ActiveWeapon = weapons[weaponNumber];
+				ActiveWeapon = weapons[weaponNumber].weapon;
 			}
 			else
 			{
@@ -593,7 +593,7 @@ public abstract class BaseHero : BaseChar
 	{
 		if (ActiveWeapon != null)
 		{
-			if (NextReloadBullets.bullet == null)
+			if (NextReloadBullets?.bullet == null)
 			{
 				NextReloadBullets = Bullets.Where(x => x.bullet?.ownerWeapon?.GetType() == ActiveWeapon.GetType()).FirstOrDefault();
 			}
@@ -659,6 +659,11 @@ public abstract class BaseHero : BaseChar
 		}
 		return false;
 	}
+	public bool PickUpWeapon(BaseWeapon weapon, int i)
+	{
+		
+		return true;
+	}
 	private void activeWeaponReloadableFinish()
 	{
 		activeWeaponReloading = false;
@@ -678,9 +683,9 @@ public abstract class BaseHero : BaseChar
 		{
 			foreach (var item in weapons)
 			{
-				if (item != null)
+				if (item.weapon != null)
 				{
-					item.transform.localScale = new Vector3(-Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+					item.weapon.transform.localScale = new Vector3(-Math.Abs(item.weapon.transform.localScale.x), item.weapon.transform.localScale.y);
 				}
 			}
 		}
@@ -688,9 +693,9 @@ public abstract class BaseHero : BaseChar
 		{
 			foreach (var item in weapons)
 			{
-				if (item != null)
+				if (item.weapon != null)
 				{
-					item.transform.localScale = new Vector3(Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+					item.weapon.transform.localScale = new Vector3(Math.Abs(item.weapon.transform.localScale.x), item.weapon.transform.localScale.y);
 				}
 			}
 		}

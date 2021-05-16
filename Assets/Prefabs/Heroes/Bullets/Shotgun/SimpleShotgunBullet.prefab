@@ -128,7 +128,7 @@ MonoBehaviour:
   speed: 30
   force: 3
   lifeTime: 3
-  ownerWeapon: {fileID: 7383137646228710031, guid: e7148270267216b41bdfecbf089f1fa8,
+  ownerWeapon: {fileID: 4008512334954954040, guid: e7148270267216b41bdfecbf089f1fa8,
     type: 3}
 --- !u!1001 &9017260800804289081
 PrefabInstance:
