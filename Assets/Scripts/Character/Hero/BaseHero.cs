@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class BaseHero : BaseChar
+public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble<ISaveModel>
 {
 	[SerializeField]
 	protected SpriteRenderer spriteRenderer;
@@ -634,7 +634,7 @@ public abstract class BaseHero : BaseChar
 	public bool PickUpBullet(StoredBullet bullet)
 	{
 		var insideBullet = bullets.Where(x => x.bullet.GetType() == bullet.bullet.GetType()).FirstOrDefault();
-		if (insideBullet?.bullet != null)
+		if (insideBullet != null)
 		{
 			if (insideBullet.CurrentCount < insideBullet.MaxStuckSize)
 			{
@@ -649,7 +649,7 @@ public abstract class BaseHero : BaseChar
 		else
 		{
 			bullets.Add(bullet);
-			if (activeWeapon?.GetType() == bullet.bullet.ownerWeapon.GetType() && nextReloadBullets?.bullet == null)
+			if (activeWeapon?.GetType() == bullet.bullet.ownerWeapon.GetType() && nextReloadBullets == null)
 			{
 				NextReloadBullets = bullet;
 				GameController.gameController.gameMenuController.RepaintBulletState(bullet.bullet, CurrentCoun: bullet.CurrentCount);
@@ -726,6 +726,51 @@ public abstract class BaseHero : BaseChar
 		}
 	}
 
+
+
+	#endregion
+
+	#region save
+	public string InSaverName = null;
+	[SerializeField]
+	private string personalHash = Guid.NewGuid().ToString();
+	public string PersonalHash { get { return personalHash; } set { personalHash = value; } }
+	public void Load(BaseHeroSaveModel model)
+	{
+		Coins = model.Coins;
+		for (int i = 0; i < model.Weapons.Length; i++)//Weapons
+		{
+			var item = model.Weapons[i];
+			weapons[i].unlock = item.unlock;
+		}
+		bullets = model.Bullets;
+	}
+
+	public BaseHeroSaveModel Save()
+	{
+		var toSave= new BaseHeroSaveModel()
+		{
+			Coins = Coins,
+			SaveName = InSaverName
+		};
+		toSave.Weapons = weapons;
+		toSave.Bullets = Bullets;
+		return toSave;
+	}
+	public Type getTT()
+	{
+		return typeof(BaseHeroSaveModel);
+	}
+
+	void ISaveble<ISaveModel>.Load(ISaveModel model)
+	{
+		Load(model as BaseHeroSaveModel);
+	}
+
+	ISaveModel ISaveble<ISaveModel>.Save()
+	{
+		return Save();
+	}
 	#endregion
 
 }
@@ -738,6 +783,3 @@ public enum HeroMoveCondition
 	stay = 0,
 	right = 1
 }
-
-
-

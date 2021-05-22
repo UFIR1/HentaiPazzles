@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1249961021550523828}
   - component: {fileID: 6867087545604639544}
-  - component: {fileID: 6902062673350335839}
+  - component: {fileID: 1303634489189236501}
   - component: {fileID: 5992067307371702052}
   - component: {fileID: 5992067307371702051}
   m_Layer: 0
@@ -87,7 +87,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6902062673350335839
+--- !u!114 &1303634489189236501
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -96,12 +96,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2244950488730860167}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47fd31bfe6f8b674e8b8cc32dd0cfbe5, type: 3}
+  m_Script: {fileID: 11500000, guid: 71e7f8734256e7946a64de6c5a6052a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxStuckSize: 350
-  currentCount: 10
-  bullet: {fileID: -1210255287142126628, guid: 0b936b719c8c98346bc1919c4a568d30, type: 3}
+  bullet: {fileID: 11400000, guid: c477c476527627145b68d30e0e77475a, type: 2}
 --- !u!50 &5992067307371702052
 Rigidbody2D:
   serializedVersion: 4
