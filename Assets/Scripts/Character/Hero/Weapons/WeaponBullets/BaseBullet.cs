@@ -7,7 +7,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-[JsonConverter(typeof(BaseConverter))]
 public abstract class BaseBullet : MonoBehaviour
 {
 	public string ObjType { get {return this.GetType().Name; } set { } }
@@ -78,40 +77,5 @@ public class BaseBulletModel : ISaveModel
 	}
 }
 
-public class BaseConverter : JsonConverter
-{
-	static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new BaseSpecifiedConcreteClassConverter() };
 
-	public override bool CanConvert(Type objectType)
-	{
-		return (objectType == typeof(BaseBullet));
-	}
-
-	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-	{
-		JObject jo = JObject.Load(reader);
-		switch (jo["ObjType"].Value<string>())
-		{
-			case nameof(FireShotGunBullet):
-				return JsonConvert.DeserializeObject<FireShotGunBullet>(jo.ToString(), SpecifiedSubclassConversion);
-			case nameof(SimpleShotGunBullet):
-				return JsonConvert.DeserializeObject<SimpleShotGunBullet>(jo.ToString(), SpecifiedSubclassConversion);
-			default:
-				throw new Exception();
-		}
-		throw new NotImplementedException();
-	}
-
-	public override bool CanWrite
-	{
-		get { return false; }
-	}
-
-	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-	{
-		throw new NotImplementedException(); // won't be called because CanWrite returns false
-	}
-
-
-}
 

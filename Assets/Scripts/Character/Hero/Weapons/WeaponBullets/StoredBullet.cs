@@ -27,8 +27,8 @@ public class StoredBullet : ScriptableObject
 		}
 		set
 		{
-			var info = new FileInfo(value.PrefabPath);
-			var path = "Prefabs/"+ info.Name.Replace(".prefab", "");
+
+			var path = value.PrefabPath.Replace("Assets/Resources/","").Replace(".prefab", "");
 			bullet = Resources.Load<BaseBullet>(path);
 		}
 	}

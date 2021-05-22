@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble<ISaveModel>
@@ -46,13 +47,22 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 				if ((int)value != 0)
 				{
 					animator.SetBool("Run", true);
-					spriteRenderer.flipX = (heroMoveCondition == HeroMoveCondition.left);
+					if (heroMoveCondition == HeroMoveCondition.left)
+					{
+						transform.localScale = new Vector3(-Math.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+					}
+					if (heroMoveCondition == HeroMoveCondition.right)
+					{
+						transform.localScale = new Vector3(Math.Abs(transform.localScale.y), transform.localScale.y, transform.localScale.z);
+					}
+					//spriteRenderer.flipX = (heroMoveCondition == HeroMoveCondition.left);
 				}
 				else
 				{
+					
 					animator.SetBool("Run", false);
 				}
-				FlipWeapon(heroMoveCondition);
+				//FlipWeapon(heroMoveCondition);
 			}
 		}
 	}

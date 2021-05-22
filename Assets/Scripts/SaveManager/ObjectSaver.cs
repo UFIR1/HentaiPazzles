@@ -8,13 +8,15 @@ using UnityEngine;
 using System.IO;
 using Newtonsoft.Json.Linq;
 
-public class Save : MonoBehaviour
+public class ObjectSaver : MonoBehaviour
 {
-    public ScriptableObject BaseHero;
+
+    private string personalHash = Guid.NewGuid().ToString();
+    public string PersonalHash { get { return personalHash; } set { personalHash = value; } }
+
 
     public MonoBehaviour[] scripts;
     public List<ISaveble<ISaveModel>> OnSave;
-    // Start is called before the first frame update
 
     [ContextMenu("SaveFile")]
     public void SaveFile()
@@ -115,7 +117,7 @@ public class CustomContractResolver : DefaultContractResolver
 }
 public interface ISaveble<T> where T: ISaveModel 
 {
-    public string PersonalHash { get; set; }
+    //public string PersonalHash { get; set; }
     public Type getTT();
     public void Load(T model);
     public T Save();
@@ -131,7 +133,7 @@ public class BaseSpecifiedConcreteClassConverter : DefaultContractResolver
 {
     protected override JsonConverter ResolveContractConverter(Type objectType)
     {
-        if (typeof(BaseBullet).IsAssignableFrom(objectType) && !objectType.IsAbstract)
+        if (typeof(ISaveModel).IsAssignableFrom(objectType) && !objectType.IsAbstract)
             return null; // pretend TableSortRuleConvert is not specified (thus avoiding a stack overflow)
         return base.ResolveContractConverter(objectType);
     }
@@ -143,7 +145,7 @@ public class ISaveModelConverter : JsonConverter
 
     public override bool CanConvert(Type objectType)
     {
-        return (objectType == typeof(BaseBullet));
+        return (objectType == typeof(ISaveModel));
     }
 
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -153,6 +155,8 @@ public class ISaveModelConverter : JsonConverter
         {
             case nameof(BaseHeroSaveModel):
                 return JsonConvert.DeserializeObject<BaseHeroSaveModel>(jo.ToString(), SpecifiedSubclassConversion);
+            case nameof(TransformModel):
+                return JsonConvert.DeserializeObject<TransformModel>(jo.ToString(), SpecifiedSubclassConversion); ;
             default:
                 throw new Exception();
         }
