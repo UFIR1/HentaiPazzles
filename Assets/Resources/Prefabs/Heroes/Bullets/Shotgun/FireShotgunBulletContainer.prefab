@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 6540441035757532253}
   - component: {fileID: 3933216044014464490}
   - component: {fileID: 3933216044014464493}
+  - component: {fileID: 6098691880271722146}
+  - component: {fileID: 7760652346742988920}
   m_Layer: 0
   m_Name: FireShotgunBulletContainer
   m_TagString: Consumables
@@ -147,3 +149,37 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &6098691880271722146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8834414041484111945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e273f45ed9cd14d8b3d334945110ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SaveGlobalPosition: 1
+  SaveLocalPosition: 0
+  SaveRotation: 1
+  SaveScale: 0
+--- !u!114 &7760652346742988920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8834414041484111945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7646ef70fad9474b82c49d046268d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  personalHash: 
+  SaveInstant: 1
+  scripts:
+  - {fileID: 6098691880271722146}
+  prefabToSpawn: {fileID: 7760652346742988920}
+  ownerWeapon: {fileID: 8834414041484111945}

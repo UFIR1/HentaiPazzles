@@ -78,8 +78,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - DestroyForce: -11.04
-    - DestroySize: 0.484
+    - DestroyForce: -25
+    - DestroySize: 0.662
     - FireProgress: -1.4
     - Float_1: 0.546
     - Float_2: 1000

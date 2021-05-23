@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 1249961021550523828}
   - component: {fileID: 6867087545604639544}
   - component: {fileID: 1303634489189236501}
+  - component: {fileID: 8652737768503650206}
+  - component: {fileID: -8480754973682487484}
   - component: {fileID: 5992067307371702052}
   - component: {fileID: 5992067307371702051}
   m_Layer: 0
@@ -100,6 +102,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 11400000, guid: c477c476527627145b68d30e0e77475a, type: 2}
+--- !u!114 &8652737768503650206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2244950488730860167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e273f45ed9cd14d8b3d334945110ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SaveGlobalPosition: 1
+  SaveLocalPosition: 0
+  SaveRotation: 1
+  SaveScale: 0
+--- !u!114 &-8480754973682487484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2244950488730860167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7646ef70fad9474b82c49d046268d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  personalHash: 
+  SaveInstant: 1
+  scripts:
+  - {fileID: 8652737768503650206}
+  prefabToSpawn: {fileID: -8480754973682487484}
+  ownerWeapon: {fileID: 2244950488730860167}
 --- !u!50 &5992067307371702052
 Rigidbody2D:
   serializedVersion: 4

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble<ISaveModel>
@@ -59,7 +58,7 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 				}
 				else
 				{
-					
+
 					animator.SetBool("Run", false);
 				}
 				//FlipWeapon(heroMoveCondition);
@@ -160,12 +159,12 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-								  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
-								   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+								   /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+									&& overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-								  /* && overallSizeURight.raycast.collider != lastDLeftCollider
-								   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+								   /* && overallSizeURight.raycast.collider != lastDLeftCollider
+									&& overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
@@ -580,7 +579,7 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 	//!смена оружия
 	public void SwitchWeapon(int weaponNumber)
 	{
-		if (weapons[weaponNumber] != null && weapons[weaponNumber]?.unlock==true)
+		if (weapons[weaponNumber] != null && weapons[weaponNumber]?.unlock == true)
 		{
 			activeWeaponSwitchable = true;
 			Invoke(nameof(activeWeaponSwitchableFinish), weapons[weaponNumber].weapon.SwitchableTime);
@@ -671,7 +670,7 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 	}
 	public bool PickUpWeapon(BaseWeapon weapon, int i)
 	{
-		
+
 		return true;
 	}
 	private void activeWeaponReloadableFinish()
@@ -758,7 +757,7 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 
 	public BaseHeroSaveModel Save()
 	{
-		var toSave= new BaseHeroSaveModel()
+		var toSave = new BaseHeroSaveModel()
 		{
 			Coins = Coins,
 			SaveName = InSaverName

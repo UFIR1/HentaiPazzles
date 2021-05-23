@@ -8,16 +8,128 @@ using UnityEngine;
 using System.IO;
 using Newtonsoft.Json.Linq;
 
-public class ObjectSaver : MonoBehaviour
+public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<ISaveModel>
 {
+	[JsonIgnore]
+	static public List<ObjIndexFinger> UnicalHashController = new List<ObjIndexFinger>();
 
-    private string personalHash = Guid.NewGuid().ToString();
-    public string PersonalHash { get { return personalHash; } set { personalHash = value; } }
+	private void Start()
+	{
+		var contance = UnicalHashController.Where(x => x.Value == PersonalHash);
+		if (contance.Count() > 1)
+		{
+			personalHash = Guid.NewGuid().ToString();
+			var id = gameObject.GetInstanceID();
+			UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+		}
+		contance = UnicalHashController.Where(x => x.Key == gameObject.GetInstanceID());
+		if (contance.Count() == 0)
+		{
+			if (string.IsNullOrEmpty(personalHash) || UnicalHashController.Where(x => x.Value == PersonalHash).Count() > 0)
+			{
+				personalHash = Guid.NewGuid().ToString();
+			}
+			var id = gameObject.GetInstanceID();
+			UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+		}
+	}
+	private void Update()
+	{
+		
+
+	}
+	private void OnValidate()
+	{
+		if (!Application.isPlaying)
+		{
+			
 
 
-    public MonoBehaviour[] scripts;
-    public List<ISaveble<ISaveModel>> OnSave;
+			foreach (var item in UnicalHashController)
+			{
+				Debug.Log($"{gameObject.name} : {item.Key} : {item.Value}");
+			}
+		}
+	}
+	private void OnDestroy()
+	{
+		UnicalHashController.Remove(UnicalHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
+	}
+	[SerializeField]
+	private string personalHash = null;
+	public string PersonalHash { get { return personalHash; } set { personalHash = value; } }
 
+	public bool SaveInstant = true;
+
+	public MonoBehaviour[] scripts;
+	public List<ISaveble<ISaveModel>> OnSave;
+
+
+	public Type getTT()
+	{
+		return typeof(ObjectSaverModel);
+	}
+	public void Load(ObjectSaverModel model)
+	{
+		var OnSave = new List<ISaveble<ISaveModel>>();
+		foreach (var item in scripts)
+		{
+			OnSave.Add(item as ISaveble<ISaveModel>);
+		}
+		for (int i = 0; i < model.SaveModels.Count; i++)
+		{
+			var saveObj = OnSave.Where(x => x.getTT() == model.SaveModels[i].GetType()).FirstOrDefault();
+			if (saveObj != null)
+			{
+				saveObj.Load(model.SaveModels[i]);
+			}
+		}
+		PersonalHash = model.PersonalHash;
+		
+	}
+
+	public ObjectSaverModel Save()
+	{
+		var result = new ObjectSaverModel();
+		OnSave = new List<ISaveble<ISaveModel>>();
+		foreach (var item in scripts)
+		{
+			OnSave.Add(item as ISaveble<ISaveModel>);
+		}
+		List<ISaveModel> modelsToSave = new List<ISaveModel>();
+		foreach (var item in OnSave)
+		{
+			modelsToSave.Add(item.Save());
+		}
+		result.SaveModels = modelsToSave;
+		result.PersonalHash = PersonalHash;
+		result.InstanceId = gameObject.GetInstanceID();
+		result.SaveInstant = SaveInstant;
+		if (SaveInstant)
+		{
+			
+			result.PrefabPath = GameController.gameController.RecourseManager.recourses.Where(x => gameObject.name.Contains(x.prefab.name)).FirstOrDefault()?.prefabPath;
+		}
+		return result;
+	}
+
+	public void Load(ISaveModel model)
+	{
+		Load(model as ObjectSaverModel);
+	}
+
+	ISaveModel ISaveble<ISaveModel>.Save()
+	{
+		return Save();
+	}
+
+
+
+
+
+
+
+	/*
     [ContextMenu("SaveFile")]
     public void SaveFile()
     {
@@ -41,14 +153,11 @@ public class ObjectSaver : MonoBehaviour
 		{
             modelsToSave.Add(item.Save());
 		}
-        var asd = /*JsonUtility.ToJson*/JsonConvert.SerializeObject(modelsToSave, new JsonSerializerSettings
+        var asd = JsonConvert.SerializeObject(modelsToSave, new JsonSerializerSettings
         {
             ContractResolver = new CustomContractResolver()
         });
-        /*JsonConvert.SerializeObject(BaseHero, new JsonSerializerSettings
-    {
-        ContractResolver = new CustomContractResolver()
-    });*/
+     
         var writer = new StreamWriter(zxc.FullName);
         writer.Write(asd);
         writer.Close();
@@ -74,7 +183,6 @@ public class ObjectSaver : MonoBehaviour
 
         var reader = new StreamReader(zxc.FullName);
         var raaa = reader.ReadToEnd();
-       // var ttttt = new Swordsman() { Coins = 100 };
         var ccccc = JsonConvert.DeserializeObject<List<ISaveModel>>(raaa);
 		for (int i = 0; i < ccccc.Count; i++)
 		{
@@ -83,95 +191,15 @@ public class ObjectSaver : MonoBehaviour
 			{
                 saveObj.Load(ccccc[i]);
 			}
-            //var model = ccccc.Where(x => x.GetType() == OnSave[i].getTT()).FirstOrDefault();
 		}
             
    
-    }
+    }*/
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
-public class CustomContractResolver : DefaultContractResolver
+public class ObjIndexFinger
 {
-
-
-
-    protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-    {
-        IList<JsonProperty> properties = base.CreateProperties(type, memberSerialization);
-        var propsToIgnore = typeof(Rigidbody2D).GetProperties().Select(p => p.Name).ToList();
-
-
-
-        properties =
-            properties.Where(p => !propsToIgnore.Contains(p.PropertyName)&&p.Writable&&p.Readable).ToList();
-
-
-
-        return properties;
-    }
-}
-public interface ISaveble<T> where T: ISaveModel 
-{
-    //public string PersonalHash { get; set; }
-    public Type getTT();
-    public void Load(T model);
-    public T Save();
-}
-[JsonConverter(typeof(ISaveModelConverter))]
-public abstract class ISaveModel
-{
-    public string ObjType { get { return this.GetType().Name; } set { } }
-    public abstract string SaveName { get; set; }
-}
-
-public class BaseSpecifiedConcreteClassConverter : DefaultContractResolver
-{
-    protected override JsonConverter ResolveContractConverter(Type objectType)
-    {
-        if (typeof(ISaveModel).IsAssignableFrom(objectType) && !objectType.IsAbstract)
-            return null; // pretend TableSortRuleConvert is not specified (thus avoiding a stack overflow)
-        return base.ResolveContractConverter(objectType);
-    }
-}
-
-public class ISaveModelConverter : JsonConverter
-{
-    static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new BaseSpecifiedConcreteClassConverter() };
-
-    public override bool CanConvert(Type objectType)
-    {
-        return (objectType == typeof(ISaveModel));
-    }
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        JObject jo = JObject.Load(reader);
-        switch (jo["ObjType"].Value<string>())
-        {
-            case nameof(BaseHeroSaveModel):
-                return JsonConvert.DeserializeObject<BaseHeroSaveModel>(jo.ToString(), SpecifiedSubclassConversion);
-            case nameof(TransformModel):
-                return JsonConvert.DeserializeObject<TransformModel>(jo.ToString(), SpecifiedSubclassConversion); ;
-            default:
-                throw new Exception();
-        }
-        throw new NotImplementedException();
-    }
-
-    public override bool CanWrite
-    {
-        get { return false; }
-    }
-
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        throw new NotImplementedException(); // won't be called because CanWrite returns false
-    }
-
-
+	public int Key { get; set; }
+	public string Value { get; set; }
+	public ObjectSaver Saver { get; set; }
 }

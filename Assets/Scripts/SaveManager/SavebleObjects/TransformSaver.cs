@@ -31,7 +31,7 @@ public class TransformSaver : MonoBehaviour, ISaveble<TransformModel>, ISaveble<
 		}
 		if (SaveRotation)
 		{
-			transform.rotation= model.rotation ;
+			transform.rotation= new Quaternion(model.rotation_x, model.rotation_y, model.rotation_z, model.rotation_w);
 		}
 		if (SaveScale)
 		{
@@ -53,7 +53,10 @@ public class TransformSaver : MonoBehaviour, ISaveble<TransformModel>, ISaveble<
 		}
 		if (SaveRotation)
 		{
-			result.rotation = transform.rotation;
+			result.rotation_x = transform.rotation.x;
+			result.rotation_y = transform.rotation.y;
+			result.rotation_z = transform.rotation.z;
+			result.rotation_w = transform.rotation.w;
 		}
 		if (SaveScale)
 		{

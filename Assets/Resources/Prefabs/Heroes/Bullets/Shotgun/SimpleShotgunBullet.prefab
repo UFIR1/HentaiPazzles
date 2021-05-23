@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 125210374401531515}
   - component: {fileID: 6840948206508534820}
   - component: {fileID: -1210255287142126628}
+  - component: {fileID: 1667442764075311374}
+  - component: {fileID: 3986441002686716676}
   m_Layer: 0
   m_Name: SimpleShotgunBullet
   m_TagString: Untagged
@@ -130,6 +132,38 @@ MonoBehaviour:
   lifeTime: 3
   ownerWeapon: {fileID: 4008512334954954040, guid: e7148270267216b41bdfecbf089f1fa8,
     type: 3}
+--- !u!114 &1667442764075311374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5090958603331797216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e273f45ed9cd14d8b3d334945110ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SaveGlobalPosition: 1
+  SaveLocalPosition: 0
+  SaveRotation: 1
+  SaveScale: 1
+--- !u!114 &3986441002686716676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5090958603331797216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7646ef70fad9474b82c49d046268d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  personalHash: 
+  SaveInstant: 1
+  scripts:
+  - {fileID: 1667442764075311374}
 --- !u!1001 &9017260800804289081
 PrefabInstance:
   m_ObjectHideFlags: 0

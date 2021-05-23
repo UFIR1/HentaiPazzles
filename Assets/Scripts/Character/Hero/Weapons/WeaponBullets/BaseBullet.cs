@@ -4,12 +4,11 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public abstract class BaseBullet : MonoBehaviour
 {
-	public string ObjType { get {return this.GetType().Name; } set { } }
+	public string ObjType { get { return this.GetType().Name; } set { } }
 	public int damage;
 	private BaseHero shooter;
 	public float speed;
@@ -21,8 +20,9 @@ public abstract class BaseBullet : MonoBehaviour
 	{
 		get
 		{
-			return AssetDatabase.GetAssetPath(ownerWeapon);//PrefabStageUtility.GetPrefabStage(ownerWeapon.gameObject);
-			//return pref.assetPath ?? "";
+			var result = GameController.gameController.RecourseManager.recourses.Where(x => x.prefab.GetComponent<BaseWeapon>().GetType() == ownerWeapon.GetType()).FirstOrDefault().prefabPath;
+			return result;  //"";// AssetDatabase.GetAssetPath(ownerWeapon);//PrefabStageUtility.GetPrefabStage(ownerWeapon.gameObject);
+							//return pref.assetPath ?? "";
 		}
 		set
 		{
@@ -71,9 +71,23 @@ public class BaseBulletModel : ISaveModel
 	public override string SaveName { get => "Bullet"; set { } }
 
 	public string PrefabPath { get; set; }
-	public static BaseBulletModel InitFromBullet(BaseBullet baseBullet )
+	public static BaseBulletModel InitFromBullet(BaseBullet baseBullet)
 	{
-		return new BaseBulletModel() { PrefabPath = AssetDatabase.GetAssetPath(baseBullet) };
+		/*
+		var coll = GameController.gameController.RecourseManager.recourses.ToList();
+		foreach (var item in coll)
+		{
+			var _type = item.prefab.GetComponent<BaseWeapon>()?.GetType();
+			var _type2 = baseBullet.ownerWeapon.GetType();
+			if (_type == _type2)
+			{
+				var zzz = item.prefabPath;
+			}
+		}*/
+		var path = GameController.gameController.RecourseManager.recourses.Where(x => x.prefab.GetComponent<BaseBullet>()?.GetType() == baseBullet.GetType()).FirstOrDefault()?.prefabPath;
+		
+		return new BaseBulletModel() { PrefabPath = path ?? "" }; /*AssetDatabase.GetAssetPath(baseBullet)*/
+
 	}
 }
 
