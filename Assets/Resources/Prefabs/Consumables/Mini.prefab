@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 5075095825603397714}
   - component: {fileID: 5394662999570323062}
   - component: {fileID: 5217936368128867900}
+  - component: {fileID: 7657145859513654707}
+  - component: {fileID: 2680572778075759690}
   m_Layer: 0
   m_Name: Mini
   m_TagString: Consumables
@@ -147,3 +149,35 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &7657145859513654707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3526738921183408512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e273f45ed9cd14d8b3d334945110ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SaveGlobalPosition: 1
+  SaveLocalPosition: 0
+  SaveRotation: 1
+  SaveScale: 0
+--- !u!114 &2680572778075759690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3526738921183408512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7646ef70fad9474b82c49d046268d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  personalHash: 
+  SaveInstant: 1
+  scripts:
+  - {fileID: 7657145859513654707}

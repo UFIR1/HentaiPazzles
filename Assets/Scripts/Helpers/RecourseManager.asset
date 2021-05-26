@@ -18,13 +18,16 @@ MonoBehaviour:
     prefabPath: Assets/Resources/Prefabs/Heroes/Weapon/ShotGun.prefab
   - prefab: {fileID: 8834414041484111945, guid: 951f1ea38e23b1940b7b2e5f4bd20c1f,
       type: 3}
-    prefabPath: Assets/Resources/Prefabs/Heroes/Bullets/Shotgun/FireShotgunBulletContainer.prefab
+    prefabPath: Assets/Resources/Prefabs/Consumables/FireShotgunBulletContainer.prefab
   - prefab: {fileID: 2244950488730860167, guid: 3bfcf377165f52842b2b41e9f63748a9,
       type: 3}
-    prefabPath: Assets/Resources/Prefabs/Heroes/Bullets/Shotgun/SimpleShotgunBulletContainer.prefab
+    prefabPath: Assets/Resources/Prefabs/Consumables/SimpleShotgunBulletContainer.prefab
   - prefab: {fileID: 5090958603331797216, guid: 0b936b719c8c98346bc1919c4a568d30,
       type: 3}
     prefabPath: Assets/Resources/Prefabs/Heroes/Bullets/Shotgun/SimpleShotgunBullet.prefab
   - prefab: {fileID: 4115937491499858440, guid: 2c40822a468edbf49a7b1b3f38468157,
       type: 3}
     prefabPath: Assets/Resources/Prefabs/Heroes/Bullets/Shotgun/FIreShotgunBullet.prefab
+  - prefab: {fileID: 3526738921183408512, guid: 9ee59b79173d0344188ea8360116415a,
+      type: 3}
+    prefabPath: Assets/Resources/Prefabs/Consumables/Mini.prefab
