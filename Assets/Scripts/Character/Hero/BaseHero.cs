@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class BaseHero : BaseChar
+public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble<ISaveModel>
 {
 	[SerializeField]
 	protected SpriteRenderer spriteRenderer;
@@ -46,13 +46,22 @@ public abstract class BaseHero : BaseChar
 				if ((int)value != 0)
 				{
 					animator.SetBool("Run", true);
-					spriteRenderer.flipX = (heroMoveCondition == HeroMoveCondition.left);
+					if (heroMoveCondition == HeroMoveCondition.left)
+					{
+						transform.localScale = new Vector3(-Math.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+					}
+					if (heroMoveCondition == HeroMoveCondition.right)
+					{
+						transform.localScale = new Vector3(Math.Abs(transform.localScale.y), transform.localScale.y, transform.localScale.z);
+					}
+					//spriteRenderer.flipX = (heroMoveCondition == HeroMoveCondition.left);
 				}
 				else
 				{
+
 					animator.SetBool("Run", false);
 				}
-				FlipWeapon(heroMoveCondition);
+				//FlipWeapon(heroMoveCondition);
 			}
 		}
 	}
@@ -150,12 +159,12 @@ public abstract class BaseHero : BaseChar
 		}
 		if (
 				   (overallSizeULeft.raycast.collider == null
-								  /* && overallSizeULeft.raycast.collider != lastDLeftCollider
-								   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+								   /* && overallSizeULeft.raycast.collider != lastDLeftCollider
+									&& overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   &&
 				   (overallSizeURight.raycast.collider == null
-								  /* && overallSizeURight.raycast.collider != lastDLeftCollider
-								   && overallSizeURight.raycast.collider != lastDRightCollider*/)
+								   /* && overallSizeURight.raycast.collider != lastDLeftCollider
+									&& overallSizeURight.raycast.collider != lastDRightCollider*/)
 				   )
 		{
 			upCollider.enabled = true;
@@ -494,7 +503,7 @@ public abstract class BaseHero : BaseChar
 
 	#region weaponsAndBullets
 	[SerializeField]
-	protected BaseWeapon[] weapons = new BaseWeapon[3];
+	protected InventoryWeapon[] weapons = new InventoryWeapon[3];
 	[SerializeField]
 	private BaseWeapon activeWeapon;
 	protected bool activeWeaponSwitchable = false;
@@ -570,13 +579,13 @@ public abstract class BaseHero : BaseChar
 	//!смена оружия
 	public void SwitchWeapon(int weaponNumber)
 	{
-		if (weapons[weaponNumber] != null)
+		if (weapons[weaponNumber] != null && weapons[weaponNumber]?.unlock == true)
 		{
 			activeWeaponSwitchable = true;
-			Invoke(nameof(activeWeaponSwitchableFinish), weapons[weaponNumber].SwitchableTime);
-			if (activeWeapon != weapons[weaponNumber])
+			Invoke(nameof(activeWeaponSwitchableFinish), weapons[weaponNumber].weapon.SwitchableTime);
+			if (activeWeapon != weapons[weaponNumber].weapon)
 			{
-				ActiveWeapon = weapons[weaponNumber];
+				ActiveWeapon = weapons[weaponNumber].weapon;
 			}
 			else
 			{
@@ -593,7 +602,7 @@ public abstract class BaseHero : BaseChar
 	{
 		if (ActiveWeapon != null)
 		{
-			if (NextReloadBullets.bullet == null)
+			if (NextReloadBullets?.bullet == null)
 			{
 				NextReloadBullets = Bullets.Where(x => x.bullet?.ownerWeapon?.GetType() == ActiveWeapon.GetType()).FirstOrDefault();
 			}
@@ -634,7 +643,7 @@ public abstract class BaseHero : BaseChar
 	public bool PickUpBullet(StoredBullet bullet)
 	{
 		var insideBullet = bullets.Where(x => x.bullet.GetType() == bullet.bullet.GetType()).FirstOrDefault();
-		if (insideBullet?.bullet != null)
+		if (insideBullet != null)
 		{
 			if (insideBullet.CurrentCount < insideBullet.MaxStuckSize)
 			{
@@ -649,7 +658,7 @@ public abstract class BaseHero : BaseChar
 		else
 		{
 			bullets.Add(bullet);
-			if (activeWeapon?.GetType() == bullet.bullet.ownerWeapon.GetType() && nextReloadBullets?.bullet == null)
+			if (activeWeapon?.GetType() == bullet.bullet.ownerWeapon.GetType() && nextReloadBullets == null)
 			{
 				NextReloadBullets = bullet;
 				GameController.gameController.gameMenuController.RepaintBulletState(bullet.bullet, CurrentCoun: bullet.CurrentCount);
@@ -658,6 +667,11 @@ public abstract class BaseHero : BaseChar
 			return true;
 		}
 		return false;
+	}
+	public bool PickUpWeapon(BaseWeapon weapon, int i)
+	{
+
+		return true;
 	}
 	private void activeWeaponReloadableFinish()
 	{
@@ -678,9 +692,9 @@ public abstract class BaseHero : BaseChar
 		{
 			foreach (var item in weapons)
 			{
-				if (item != null)
+				if (item.weapon != null)
 				{
-					item.transform.localScale = new Vector3(-Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+					item.weapon.transform.localScale = new Vector3(-Math.Abs(item.weapon.transform.localScale.x), item.weapon.transform.localScale.y);
 				}
 			}
 		}
@@ -688,9 +702,9 @@ public abstract class BaseHero : BaseChar
 		{
 			foreach (var item in weapons)
 			{
-				if (item != null)
+				if (item.weapon != null)
 				{
-					item.transform.localScale = new Vector3(Math.Abs(item.transform.localScale.x), item.transform.localScale.y);
+					item.weapon.transform.localScale = new Vector3(Math.Abs(item.weapon.transform.localScale.x), item.weapon.transform.localScale.y);
 				}
 			}
 		}
@@ -721,6 +735,51 @@ public abstract class BaseHero : BaseChar
 		}
 	}
 
+
+
+	#endregion
+
+	#region save
+	public string InSaverName = null;
+	[SerializeField]
+	private string personalHash = Guid.NewGuid().ToString();
+	public string PersonalHash { get { return personalHash; } set { personalHash = value; } }
+	public void Load(BaseHeroSaveModel model)
+	{
+		Coins = model.Coins;
+		for (int i = 0; i < model.Weapons.Length; i++)//Weapons
+		{
+			var item = model.Weapons[i];
+			weapons[i].unlock = item.unlock;
+		}
+		bullets = model.Bullets;
+	}
+
+	public BaseHeroSaveModel Save()
+	{
+		var toSave = new BaseHeroSaveModel()
+		{
+			Coins = Coins,
+			SaveName = InSaverName
+		};
+		toSave.Weapons = weapons;
+		toSave.Bullets = Bullets;
+		return toSave;
+	}
+	public Type getTT()
+	{
+		return typeof(BaseHeroSaveModel);
+	}
+
+	void ISaveble<ISaveModel>.Load(ISaveModel model)
+	{
+		Load(model as BaseHeroSaveModel);
+	}
+
+	ISaveModel ISaveble<ISaveModel>.Save()
+	{
+		return Save();
+	}
 	#endregion
 
 }
@@ -733,6 +792,3 @@ public enum HeroMoveCondition
 	stay = 0,
 	right = 1
 }
-
-
-

@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
 	public GameMenuController gameMenuController;
 	string spawnPointName;
 	public GameObject Player;
+	public RecourseManager RecourseManager;
 
 	private void Awake()
 	{

@@ -40,13 +40,17 @@ public class GameMenuController : MonoBehaviour
 			HotKeysHelper.currentInputType = InputType.Global;
 		}
 	}
+	public void Exit()
+	{
+		Application.Quit();
+	}
 
 	private bool CheckActiveMenu()
 	{
 		return MainMenu.activeSelf || MenuPanels.Where(x => x.activeSelf == true).Any();
 	}
 	#endregion
-	#region player
+	#region player hud
 	public TextMeshProUGUI WeaponStateText;
 	public Image BulletImg;
 	private int lastCurrentMagazineLoaded = 0;

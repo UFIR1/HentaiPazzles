@@ -16,7 +16,7 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 
 
 
-	public virtual void ReadyToUse()
+	public virtual void OnReadyToUse()
 	{
 		if (usableTextObj == null)
 		{
@@ -26,7 +26,7 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 		usableTextMesh.text = $"Press {HotKeysHelper.Interaction}\n to interaction";
 		usableTextObj.SetActive(true);
 	}
-	public virtual void NotReadyToUse()
+	public virtual void OnNotReadyToUse()
 	{
 		if (usableTextObj != null)
 		{
@@ -49,14 +49,14 @@ public abstract class BaseInteractiveObject : MonoBehaviour, IInteractive
 	{
 		if (collision.GetComponent<BaseHero>() != null)
 		{
-			ReadyToUse();
+			OnReadyToUse();
 		}
 	}
 	virtual public void OnTriggerExit2D(Collider2D collision)
 	{
 		if (collision.GetComponent<BaseHero>() != null)
 		{
-			NotReadyToUse();
+			OnNotReadyToUse();
 		}
 	}
 	protected void Unlock(float timeToUnlock)

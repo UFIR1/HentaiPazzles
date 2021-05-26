@@ -1,22 +1,45 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using UnityEngine;
 
 public abstract class BaseBullet : MonoBehaviour
 {
+	public string ObjType { get { return this.GetType().Name; } set { } }
 	public int damage;
 	private BaseHero shooter;
 	public float speed;
 	public float force;
 	public float lifeTime;
+	[JsonIgnore]
 	public BaseWeapon ownerWeapon;
+	public string saveOwnerWeapon
+	{
+		get
+		{
+			var result = GameController.gameController.RecourseManager.recourses.Where(x => x.prefab.GetComponent<BaseWeapon>().GetType() == ownerWeapon.GetType()).FirstOrDefault().prefabPath;
+			return result;  //"";// AssetDatabase.GetAssetPath(ownerWeapon);//PrefabStageUtility.GetPrefabStage(ownerWeapon.gameObject);
+							//return pref.assetPath ?? "";
+		}
+		set
+		{
+			try
+			{
+				ownerWeapon = Resources.Load<BaseWeapon>(value);
+			}
+			catch
+			{
+			}
+		}
+	}
 	//public Type ownerType;
 
 	public BaseHero Shooter
 	{
-		get => shooter; 
+		get => shooter;
 		set
 		{
 			shooter = value;
@@ -25,7 +48,7 @@ public abstract class BaseBullet : MonoBehaviour
 				Physics2D.IgnoreCollision(transform.GetComponent<Collider2D>(), item);
 			}*/
 			damage = value.Damage;
-			
+
 		}
 	}
 	private void Start()
@@ -40,4 +63,33 @@ public abstract class BaseBullet : MonoBehaviour
 		Destroy(gameObject);
 	}
 
+
 }
+
+public class BaseBulletModel : ISaveModel
+{
+	public override string SaveName { get => "Bullet"; set { } }
+
+	public string PrefabPath { get; set; }
+	public static BaseBulletModel InitFromBullet(BaseBullet baseBullet)
+	{
+		/*
+		var coll = GameController.gameController.RecourseManager.recourses.ToList();
+		foreach (var item in coll)
+		{
+			var _type = item.prefab.GetComponent<BaseWeapon>()?.GetType();
+			var _type2 = baseBullet.ownerWeapon.GetType();
+			if (_type == _type2)
+			{
+				var zzz = item.prefabPath;
+			}
+		}*/
+		var path = GameController.gameController.RecourseManager.recourses.Where(x => x.prefab.GetComponent<BaseBullet>()?.GetType() == baseBullet.GetType()).FirstOrDefault()?.prefabPath;
+		
+		return new BaseBulletModel() { PrefabPath = path ?? "" }; /*AssetDatabase.GetAssetPath(baseBullet)*/
+
+	}
+}
+
+
+
