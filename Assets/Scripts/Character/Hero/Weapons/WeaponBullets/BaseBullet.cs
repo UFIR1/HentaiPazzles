@@ -73,17 +73,7 @@ public class BaseBulletModel : ISaveModel
 	public string PrefabPath { get; set; }
 	public static BaseBulletModel InitFromBullet(BaseBullet baseBullet)
 	{
-		/*
-		var coll = GameController.gameController.RecourseManager.recourses.ToList();
-		foreach (var item in coll)
-		{
-			var _type = item.prefab.GetComponent<BaseWeapon>()?.GetType();
-			var _type2 = baseBullet.ownerWeapon.GetType();
-			if (_type == _type2)
-			{
-				var zzz = item.prefabPath;
-			}
-		}*/
+
 		var path = GameController.gameController.RecourseManager.recourses.Where(x => x.prefab.GetComponent<BaseBullet>()?.GetType() == baseBullet.GetType()).FirstOrDefault()?.prefabPath;
 		
 		return new BaseBulletModel() { PrefabPath = path ?? "" }; /*AssetDatabase.GetAssetPath(baseBullet)*/
