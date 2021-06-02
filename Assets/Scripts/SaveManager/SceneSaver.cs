@@ -34,7 +34,7 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
 	{
 
         var ccccc = model.SaveableObjects;
-        var onDestroy = ObjectSaver.UnicalHashController.Where(x => !ccccc.Where(y => y.InstanceId == x.Key).Any() && !ccccc.Where(y => y.PersonalHash == x.Value).Any()).ToList();
+        var onDestroy = GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => !ccccc.Where(y => y.InstanceId == x.Key).Any() && !ccccc.Where(y => y.PersonalHash == x.Value).Any()).ToList();
         var destroed = new List<ObjIndexFinger>();
         foreach (var item in onDestroy)
         {
@@ -46,19 +46,27 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
         }
         foreach (var item in destroed)
         {
-            ObjectSaver.UnicalHashController.Remove(item);
+            GameController.gameController.UnicalHashesSaver.UnicalHashController.Remove(item);
         }
         for (int i = 0; i < ccccc.Count; i++)
         {
-            var asd = ObjectSaver.UnicalHashController.ToList();
-            var sameObj = ObjectSaver.UnicalHashController.Where(x => x.Key == ccccc[i].InstanceId || x.Value == ccccc[i].PersonalHash).ToList();
+            var asd = GameController.gameController.UnicalHashesSaver.UnicalHashController.ToList();
+            var sameObj = GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => x.Key == ccccc[i].InstanceId || x.Value == ccccc[i].PersonalHash).ToList();
             if (!sameObj.Any())
             {
                 if (ccccc[i].SaveInstant)
                 {
-                    var pref = Resources.Load<GameObject>(ccccc[i].PrefabPath.Replace("Assets/Resources/", "").Replace(".prefab", ""));
-                    var obj = GameObject.Instantiate(pref);
-                    obj.GetComponent<ObjectSaver>().Load(ccccc[i]);
+                    try
+                    {
+                        var pref = Resources.Load<GameObject>(ccccc[i].PrefabPath.Replace("Assets/Resources/", "").Replace(".prefab", ""));
+                        var obj = GameObject.Instantiate(pref);
+                        obj.GetComponent<ObjectSaver>().Load(ccccc[i]);
+                    }
+					catch
+					{
+                        UnityEngine.Debug.LogError($"Type: {ccccc[i].ObjType} SaveName: {ccccc[i].SaveName} Path: {ccccc[i].PrefabPath}");
+					}
+                  
                 }
 
             }

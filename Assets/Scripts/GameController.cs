@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
 {
 	public static GameController gameController;
 	public static GameSaver gameSaver;
-
+	public HashesSaver UnicalHashesSaver;
 	GameObject Canvas;
 	public GameMenuController gameMenuController;
 	string spawnPointName;
@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
 
 	private void Awake()
 	{
+		gameController = this;
         DontDestroyOnLoad(gameObject);
 		if (GameObject.FindGameObjectsWithTag(Tags.GameController.ToString()).Length > 1)
 		{

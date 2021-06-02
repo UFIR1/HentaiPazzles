@@ -1078,7 +1078,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SaveGlobalPosition: 1
   SaveLocalPosition: 0
-  SaveRotation: 1
+  SaveRotation: 0
   SaveScale: 1
 --- !u!114 &977129439
 MonoBehaviour:
@@ -1097,7 +1097,6 @@ MonoBehaviour:
   scripts:
   - {fileID: 2089216817953998229}
   - {fileID: 977129438}
-  prefabToSpawn: {fileID: 977129439}
 --- !u!1 &2089216818031203810
 GameObject:
   m_ObjectHideFlags: 0

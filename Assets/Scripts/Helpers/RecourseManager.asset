@@ -31,3 +31,6 @@ MonoBehaviour:
   - prefab: {fileID: 3526738921183408512, guid: 9ee59b79173d0344188ea8360116415a,
       type: 3}
     prefabPath: Assets/Resources/Prefabs/Consumables/Mini.prefab
+  - prefab: {fileID: 2089216817953998230, guid: a2f95c1228d77c84fb1fa71dcd649d08,
+      type: 3}
+    prefabPath: Assets/Resources/Prefabs/Heroes/Swordsman/Swordsman.prefab

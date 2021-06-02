@@ -1022,6 +1022,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1925205994 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7118353393842302025, guid: 994aa5177b70f52488a2911ab75d583a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4110270886118086832}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1925205997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1925205994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f79f9610ff0e2745b8022fefbb748bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentSceneName: 
 --- !u!114 &2041298861 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7868945469051835053, guid: 83eee510309cf894f932bdf26476824c,
@@ -1041,10 +1060,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 977129438, guid: a2f95c1228d77c84fb1fa71dcd649d08, type: 3}
-      propertyPath: SaveRotation
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2089216817953998218, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
       propertyPath: m_RootOrder
@@ -1370,6 +1385,12 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4372130738976376454, guid: 994aa5177b70f52488a2911ab75d583a,
+        type: 3}
+      propertyPath: HashesSaver
+      value: 
+      objectReference: {fileID: 11400000, guid: 2f9868d2821572545bbbbb7734c9078e,
+        type: 2}
     - target: {fileID: 4372130738976376454, guid: 994aa5177b70f52488a2911ab75d583a,
         type: 3}
       propertyPath: RecourseManager

@@ -11,11 +11,12 @@ using System.Threading;
 
 public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISaveModel>
 {
-
-	private SaveFileManager fileManager = new SaveFileManager();
+	//private static scenetransition
+	private SaveFileManager fileManager;
 	public string CurrentSceneName;
 	private void Awake()
 	{
+
 		fileManager = new SaveFileManager();
 		if (CurrentSceneName == null)
 		{
@@ -66,7 +67,10 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 		return true;
 	}
-
+	private void OnLevelWasLoaded(int level)
+	{
+		
+	}
 
 	[ContextMenu("SaveGame")]
 	public void SaveGame()
@@ -175,7 +179,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			}
 		}
 	}
-
+	private AsyncOperation loadingSceneOperation;
 	[ContextMenu("LoadGame")]
 	public void LoadGame()
 	{
@@ -193,18 +197,12 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			var gameConfigText = gameConfigReader.ReadToEnd();
 			gameConfigReader.Close();
 			var gameConfig = JsonConvert.DeserializeObject<GameSaverModel>(gameConfigText);
-			SceneManager.LoadScene(gameConfig.CurrentSceneName);
-
-			var sceneToLoadFile = new FileInfo(scenesDirectory + $"\\{gameConfig.CurrentSceneName}.json");
-			if (sceneToLoadFile.Exists)
-			{
-				//var sceneReader = 
-				string sceneText = new StreamReader(sceneToLoadFile.FullName).ReadToEnd();
-				//sceneReader.Close();
-				var sceneModel = JsonConvert.DeserializeObject<SceneSaverModel>(sceneText);
-				var loadingScene = GameObject.FindObjectOfType<SceneSaver>();
-				loadingScene.Load(sceneModel);
-			}
+			loadingSceneOperation = SceneManager.LoadSceneAsync(gameConfig.CurrentSceneName);
+			loadingSceneOperation.completed += loadingSceneFineshed;
+			//loadingSceneOperation.allowSceneActivation = false;
+			Loadingsc();
+			//Invoke(nameof(Loadingsc), 1);
+			//StartCoroutine(Load(scenesDirectory, gameConfig));
 		}
 
 		/*
@@ -257,6 +255,29 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			}
 		}*/
 
+	}
+
+	private void loadingSceneFineshed(AsyncOperation obj)
+	{
+		string saveName = "testSave";
+		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
+		var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
+		var sceneToLoadFile = new FileInfo(scenesDirectory + $"\\{SceneManager.GetActiveScene().name}.json");
+		if (sceneToLoadFile.Exists)
+		{
+			//var sceneReader = 
+			string sceneText = new StreamReader(sceneToLoadFile.FullName).ReadToEnd();
+			//sceneReader.Close();
+			var sceneModel = JsonConvert.DeserializeObject<SceneSaverModel>(sceneText);
+			var loadingScene = GameObject.FindObjectOfType<SceneSaver>();
+			loadingScene.Load(sceneModel);
+		}
+	}
+
+	public void Loadingsc()
+	{
+
+		
 	}
 
 	public System.Type getTT()

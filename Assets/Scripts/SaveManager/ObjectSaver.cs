@@ -10,28 +10,31 @@ using Newtonsoft.Json.Linq;
 
 public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<ISaveModel>
 {
-	[JsonIgnore]
-	static public List<ObjIndexFinger> UnicalHashController = new List<ObjIndexFinger>();
-
-	private void Start()
+	private void Awake()
 	{
-		var contance = UnicalHashController.Where(x => x.Value == PersonalHash);
+		var contance = GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => x.Value == PersonalHash);
 		if (contance.Count() > 1)
 		{
 			personalHash = Guid.NewGuid().ToString();
 			var id = gameObject.GetInstanceID();
-			UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+			GameController.gameController.UnicalHashesSaver.UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
 		}
-		contance = UnicalHashController.Where(x => x.Key == gameObject.GetInstanceID());
+		contance = GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => x.Key == gameObject.GetInstanceID());
 		if (contance.Count() == 0)
 		{
-			if (string.IsNullOrEmpty(personalHash) || UnicalHashController.Where(x => x.Value == PersonalHash).Count() > 0)
+			if (string.IsNullOrEmpty(personalHash) || GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => x.Value == PersonalHash).Count() > 0)
 			{
 				personalHash = Guid.NewGuid().ToString();
 			}
 			var id = gameObject.GetInstanceID();
-			UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+			GameController.gameController.UnicalHashesSaver.UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
 		}
+	}
+
+	private void Start()
+	{
+		
+		
 	}
 	private void Update()
 	{
@@ -40,20 +43,21 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 	}
 	private void OnValidate()
 	{
+		/*
 		if (!Application.isPlaying)
 		{
 			
 
 
-			foreach (var item in UnicalHashController)
+			foreach (var item in GameController.gameController.UnicalHashesSaver.UnicalHashController)
 			{
 				Debug.Log($"{gameObject.name} : {item.Key} : {item.Value}");
 			}
-		}
+		}*/
 	}
 	private void OnDestroy()
 	{
-		UnicalHashController.Remove(UnicalHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
+		GameController.gameController.UnicalHashesSaver.UnicalHashController.Remove(GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
 	}
 	[SerializeField]
 	private string personalHash = null;
