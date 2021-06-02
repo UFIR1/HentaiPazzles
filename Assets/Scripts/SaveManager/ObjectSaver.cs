@@ -11,25 +11,25 @@ using Newtonsoft.Json.Linq;
 public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<ISaveModel>
 {
 	[JsonIgnore]
-	 public static List<ObjIndexFinger> unicalHashController = new List<ObjIndexFinger>();
+	 public static List<ObjIndexFinger> UniqueHashController = new List<ObjIndexFinger>();
 	private void Awake()
 	{
-		var contance = unicalHashController.Where(x => x.Value == PersonalHash);
+		var contance = UniqueHashController.Where(x => x.Value == PersonalHash);
 		if (contance.Count() > 1)
 		{
 			personalHash = Guid.NewGuid().ToString();
 			var id = gameObject.GetInstanceID();
-			unicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+			UniqueHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
 		}
-		contance = unicalHashController.Where(x => x.Key == gameObject.GetInstanceID());
+		contance = UniqueHashController.Where(x => x.Key == gameObject.GetInstanceID());
 		if (contance.Count() == 0)
 		{
-			if (string.IsNullOrEmpty(personalHash) || unicalHashController.Where(x => x.Value == PersonalHash).Count() > 0)
+			if (string.IsNullOrEmpty(personalHash) || UniqueHashController.Where(x => x.Value == PersonalHash).Count() > 0)
 			{
 				personalHash = Guid.NewGuid().ToString();
 			}
 			var id = gameObject.GetInstanceID();
-			unicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+			UniqueHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
 		}
 	}
 
@@ -49,7 +49,7 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 	}
 	private void OnDestroy()
 	{
-		unicalHashController.Remove(unicalHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
+		UniqueHashController.Remove(UniqueHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
 	}
 	[SerializeField]
 	private string personalHash = null;
@@ -59,7 +59,7 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 
 	public MonoBehaviour[] scripts;
 	public List<ISaveble<ISaveModel>> OnSave;
-
+	public bool itsUniqueObject;
 
 	public Type getTT()
 	{

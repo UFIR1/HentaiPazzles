@@ -64,12 +64,41 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		var settingsWriter = new StreamWriter(gameSettings.FullName);
 		settingsWriter.Write(gameSattings);
 		settingsWriter.Close();
-
+		SaveUniqueObjects();
 		return true;
 	}
 	private void OnLevelWasLoaded(int level)
 	{
 		
+	}
+
+	public void SaveUniqueObjects()
+	{
+		string saveName = "testSave";
+		var saveDirectory = new DirectoryInfo(fileManager.PreSaveDirectory.FullName);
+		var uniqueObjectsDirectory = new DirectoryInfo(saveDirectory + $"\\UniqueObjects");
+		if (!uniqueObjectsDirectory.Exists)
+		{
+			uniqueObjectsDirectory.Create();
+		}
+		var uniqueObjects = GameObject.FindObjectsOfType<ObjectSaver>().Where(x => x.itsUniqueObject);
+		var objectsModels = new List<UniqueObjectModel>();
+		foreach (var item in uniqueObjects)
+		{
+			objectsModels.Add(new UniqueObjectModel() { SceneName = SceneManager.GetActiveScene().name, objectModel = item.Save() , Name = item.name});
+		}
+		foreach (var item in objectsModels)
+		{
+			var savebleFile = new FileInfo(uniqueObjectsDirectory + $"\\object_{item.Name}.json");
+
+			var writer = new StreamWriter(savebleFile.OpenWrite());
+			var textToWrite = JsonConvert.SerializeObject(item, new JsonSerializerSettings
+			{
+				ContractResolver = new CustomContractResolver()
+			});
+			writer.Write(textToWrite);
+			writer.Close();
+		}
 	}
 
 	[ContextMenu("SaveGame")]
@@ -91,10 +120,10 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			}
 		}
 
-		if (!fileManager.PreSaveDirectory.Exists)
+		/*if (!fileManager.PreSaveDirectory.Exists)
 		{
 			throw new System.Exception($"File integrity violated: Directory \"{fileManager.PreSaveDirectory.FullName}\" deleted");
-		}
+		}*/
 
 
 
@@ -187,6 +216,47 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			var loadingScene = GameObject.FindObjectOfType<SceneSaver>();
 			loadingScene.Load(sceneModel);
 		}
+		var uniqueObjects = new List<UniqueObjectModel>();
+		var uniqueObjectsDirectory = new DirectoryInfo(saveDirectory + "\\UniqueObjects");
+		var uniqueObjectsFiles = uniqueObjectsDirectory.GetFiles();
+		foreach (var item in uniqueObjectsFiles)
+		{
+			var uniqueObjectText = new StreamReader(item.FullName).ReadToEnd();
+			var uniqueModel = JsonConvert.DeserializeObject<UniqueObjectModel>(uniqueObjectText);
+			uniqueObjects.Add(uniqueModel);
+		}
+		foreach (var item in uniqueObjects.Where(x=>x.SceneName== SceneManager.GetActiveScene().name))
+		{
+			var sameObj = ObjectSaver.UniqueHashController.Where(x => x.Key == item.objectModel.InstanceId || x.Value == item.objectModel.PersonalHash).ToList();
+			if (!sameObj.Any())
+			{
+				var onDestroy = ObjectSaver.UniqueHashController.Where(x => !(item.objectModel.InstanceId == x.Key) && !(item.objectModel.PersonalHash == x.Value)).ToList();
+				var destroed = new List<ObjIndexFinger>();
+				foreach (var item1 in onDestroy)
+				{
+					if (item1.Saver != null)
+					{
+						Destroy(item1.Saver.gameObject);
+						destroed.Add(item1);
+					}
+				}
+				foreach (var item1 in destroed)
+				{
+					ObjectSaver.UniqueHashController.Remove(item1);
+				}
+
+
+
+				var pref = Resources.Load<GameObject>(item.objectModel.PrefabPath.Replace("Assets/Resources/", "").Replace(".prefab", ""));
+				var uniqueObject = GameObject.Instantiate(pref);
+				uniqueObject.GetComponent<ObjectSaver>().Load(item.objectModel);
+			}
+			else
+			{
+				var uniqueObject = sameObj.FirstOrDefault();
+				uniqueObject.Saver.Load(item.objectModel);
+			}
+		}
 	}
 
 	public void Loadingsc()
@@ -227,4 +297,13 @@ public class GameSaverModel : ISaveModel
 {
 	public string CurrentSceneName { get; set; }
 	public override string SaveName { get => "gamesave"; set  { } }
+}
+
+public class UniqueObjectModel: ISaveModel
+{
+	public string SceneName { get; set; }
+	[JsonIgnore]
+	public string Name { get; set; }
+	public ObjectSaverModel objectModel { get; set; }
+	public override string SaveName { get => "UniqueModel"; set { } }
 }

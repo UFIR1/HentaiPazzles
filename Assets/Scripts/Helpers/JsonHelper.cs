@@ -78,6 +78,8 @@ public class ISaveModelConverter : JsonConverter
 				return JsonConvert.DeserializeObject<GameSaverModel>(jo.ToString(), SpecifiedSubclassConversion);
 			case nameof(SceneSaverModel):
 				return JsonConvert.DeserializeObject<SceneSaverModel>(jo.ToString(), SpecifiedSubclassConversion);
+			case nameof(UniqueObjectModel):
+				return JsonConvert.DeserializeObject<UniqueObjectModel>(jo.ToString(), SpecifiedSubclassConversion);
 			default:
 				throw new Exception();
 		}

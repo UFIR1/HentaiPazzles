@@ -1060,6 +1060,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 977129439, guid: a2f95c1228d77c84fb1fa71dcd649d08, type: 3}
+      propertyPath: itsUniqueObject
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2089216817953998218, guid: a2f95c1228d77c84fb1fa71dcd649d08,
         type: 3}
       propertyPath: m_RootOrder
@@ -1396,6 +1400,12 @@ PrefabInstance:
       propertyPath: RecourseManager
       value: 
       objectReference: {fileID: 11400000, guid: 3c8e06affeb86014686a3d0d28c17b05,
+        type: 2}
+    - target: {fileID: 4372130738976376454, guid: 994aa5177b70f52488a2911ab75d583a,
+        type: 3}
+      propertyPath: UnicalHashesSaver
+      value: 
+      objectReference: {fileID: 11400000, guid: 2f9868d2821572545bbbbb7734c9078e,
         type: 2}
     - target: {fileID: 7118353393842302025, guid: 994aa5177b70f52488a2911ab75d583a,
         type: 3}
