@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
 	public static GameController gameController;
+	public static GameSaver gameSaver;
+
 	GameObject Canvas;
 	public GameMenuController gameMenuController;
 	string spawnPointName;
@@ -20,6 +22,8 @@ public class GameController : MonoBehaviour
 			Destroy(gameObject);
 		}
 		gameController = this;
+		gameSaver = gameObject.GetComponent<GameSaver>();
+		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
 		Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
 	}
 	// Start is called before the first frame update
@@ -31,6 +35,8 @@ public class GameController : MonoBehaviour
 	private void OnLevelWasLoaded(int level)
 	{
 		gameController = this;
+		gameSaver = gameObject.GetComponent<GameSaver>();
+		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
 		Init();
 		if (Player != null)
 		{

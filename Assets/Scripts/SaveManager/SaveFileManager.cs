@@ -10,7 +10,15 @@ public class SaveFileManager
     public SaveFileManager()
 	{
 		MainDirectory = new DirectoryInfo(Application.persistentDataPath + "\\Saves");
+		if (!MainDirectory.Exists)
+		{
+			MainDirectory.Create();
+		}
 		PreSaveDirectory = new DirectoryInfo(MainDirectory.FullName + "\\PreSave");
+		if (!PreSaveDirectory.Exists)
+		{
+			PreSaveDirectory.Create();
+		}
 	}
 	public SaveFileManager(string path)
 	{

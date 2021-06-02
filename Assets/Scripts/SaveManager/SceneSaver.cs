@@ -25,7 +25,7 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
         Load(model);
 	}
 
-	public ISaveModel Save()
+	ISaveModel ISaveble<ISaveModel>.Save()
 	{
         return Save();
 	}
@@ -71,7 +71,7 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
 
     }
 
-    SceneSaverModel ISaveble<SceneSaverModel>.Save()
+    public SceneSaverModel Save()
 	{
         var objectSavers = GameObject.FindObjectsOfType<ObjectSaver>();
         var toSave = new List<ISaveble<ISaveModel>>();
