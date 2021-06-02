@@ -7,7 +7,6 @@ public class GameController : MonoBehaviour
 {
 	public static GameController gameController;
 	public static GameSaver gameSaver;
-	public HashesSaver UnicalHashesSaver;
 	GameObject Canvas;
 	public GameMenuController gameMenuController;
 	string spawnPointName;

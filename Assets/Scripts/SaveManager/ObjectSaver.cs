@@ -10,24 +10,26 @@ using Newtonsoft.Json.Linq;
 
 public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<ISaveModel>
 {
+	[JsonIgnore]
+	 public static List<ObjIndexFinger> unicalHashController = new List<ObjIndexFinger>();
 	private void Awake()
 	{
-		var contance = GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => x.Value == PersonalHash);
+		var contance = unicalHashController.Where(x => x.Value == PersonalHash);
 		if (contance.Count() > 1)
 		{
 			personalHash = Guid.NewGuid().ToString();
 			var id = gameObject.GetInstanceID();
-			GameController.gameController.UnicalHashesSaver.UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+			unicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
 		}
-		contance = GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => x.Key == gameObject.GetInstanceID());
+		contance = unicalHashController.Where(x => x.Key == gameObject.GetInstanceID());
 		if (contance.Count() == 0)
 		{
-			if (string.IsNullOrEmpty(personalHash) || GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => x.Value == PersonalHash).Count() > 0)
+			if (string.IsNullOrEmpty(personalHash) || unicalHashController.Where(x => x.Value == PersonalHash).Count() > 0)
 			{
 				personalHash = Guid.NewGuid().ToString();
 			}
 			var id = gameObject.GetInstanceID();
-			GameController.gameController.UnicalHashesSaver.UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+			unicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
 		}
 	}
 
@@ -49,7 +51,7 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 			
 
 
-			foreach (var item in GameController.gameController.UnicalHashesSaver.UnicalHashController)
+			foreach (var item in unicalHashController)
 			{
 				Debug.Log($"{gameObject.name} : {item.Key} : {item.Value}");
 			}
@@ -57,7 +59,7 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 	}
 	private void OnDestroy()
 	{
-		GameController.gameController.UnicalHashesSaver.UnicalHashController.Remove(GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
+		unicalHashController.Remove(unicalHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
 	}
 	[SerializeField]
 	private string personalHash = null;

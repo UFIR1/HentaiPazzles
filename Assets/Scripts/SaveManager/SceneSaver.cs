@@ -34,7 +34,7 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
 	{
 
         var ccccc = model.SaveableObjects;
-        var onDestroy = GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => !ccccc.Where(y => y.InstanceId == x.Key).Any() && !ccccc.Where(y => y.PersonalHash == x.Value).Any()).ToList();
+        var onDestroy = ObjectSaver.unicalHashController.Where(x => !ccccc.Where(y => y.InstanceId == x.Key).Any() && !ccccc.Where(y => y.PersonalHash == x.Value).Any()).ToList();
         var destroed = new List<ObjIndexFinger>();
         foreach (var item in onDestroy)
         {
@@ -46,12 +46,12 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
         }
         foreach (var item in destroed)
         {
-            GameController.gameController.UnicalHashesSaver.UnicalHashController.Remove(item);
+            ObjectSaver.unicalHashController.Remove(item);
         }
         for (int i = 0; i < ccccc.Count; i++)
         {
-            var asd = GameController.gameController.UnicalHashesSaver.UnicalHashController.ToList();
-            var sameObj = GameController.gameController.UnicalHashesSaver.UnicalHashController.Where(x => x.Key == ccccc[i].InstanceId || x.Value == ccccc[i].PersonalHash).ToList();
+            var asd = ObjectSaver.unicalHashController.ToList();
+            var sameObj = ObjectSaver.unicalHashController.Where(x => x.Key == ccccc[i].InstanceId || x.Value == ccccc[i].PersonalHash).ToList();
             if (!sameObj.Any())
             {
                 if (ccccc[i].SaveInstant)
