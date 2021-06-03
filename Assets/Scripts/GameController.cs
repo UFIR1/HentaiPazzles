@@ -75,14 +75,14 @@ public class GameController : MonoBehaviour
 			}
 		}
 	}
-	public void LoadLevel(int sceneBuilNumber,string spawnPointName, LoadSceneMode loadSceneMode)
+	public void LoadLevel(string sceneName,string spawnPointName)
 	{
 		this.spawnPointName = spawnPointName;
 		if (Player!=null)
 		{
 			GameObject.DontDestroyOnLoad(Player);
 		}
-		SceneManager.LoadScene(sceneBuilNumber, loadSceneMode);
+		gameSaver.LoadScene(sceneName);
 		
 	}
 
