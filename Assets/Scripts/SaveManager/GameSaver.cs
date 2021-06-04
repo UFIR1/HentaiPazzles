@@ -15,6 +15,9 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	private static SaveFileManager fileManager;
 	public string CurrentSceneName;
 	public static string CurrentSaveName;
+	public static ExternalOnLoadFinished externalOnLoadFinished;
+	public delegate void ExternalOnLoadFinished();
+
 	private void Awake()
 	{
 
@@ -40,9 +43,12 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			sceneSaveDirectory.Create();
 		}
 		var sceneFile = new FileInfo(sceneSaveDirectory + $"\\{SceneManager.GetActiveScene().name}.json");
-		var sceneWriter = new StreamWriter(sceneFile.FullName);
+
+		var sceneWriter = new StreamWriter(File.Open(sceneFile.FullName, FileMode.Create, FileAccess.ReadWrite));
 		sceneWriter.Write(result);
 		sceneWriter.Close();
+
+
 		Process.Start(@$"{fileManager.MainDirectory.FullName}");
 
 		var gameSattingsModel = Save();
@@ -63,7 +69,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	}
 	private void OnLevelWasLoaded(int level)
 	{
-		
+
 	}
 
 	public void SaveUniqueObjects()
@@ -79,13 +85,13 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		var objectsModels = new List<UniqueObjectModel>();
 		foreach (var item in uniqueObjects)
 		{
-			objectsModels.Add(new UniqueObjectModel() { SceneName = SceneManager.GetActiveScene().name, objectModel = item.Save() , Name = item.name});
+			objectsModels.Add(new UniqueObjectModel() { SceneName = SceneManager.GetActiveScene().name, objectModel = item.Save(), Name = item.name });
 		}
 		foreach (var item in objectsModels)
 		{
 			var savebleFile = new FileInfo(uniqueObjectsDirectory + $"\\object_{item.Name}.json");
 
-			var writer = new StreamWriter(savebleFile.OpenWrite());
+			var writer = new StreamWriter(File.Open(savebleFile.FullName, FileMode.Create, FileAccess.ReadWrite));
 			var textToWrite = JsonConvert.SerializeObject(item, new JsonSerializerSettings
 			{
 				ContractResolver = new CustomContractResolver()
@@ -173,13 +179,19 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	}
 	private AsyncOperation loadingSceneOperation;
 	[ContextMenu("LoadGame")]
-	public void LoadGame( )
+	public void LoadGame()
 	{
 		string saveName = "testSave";
 		CurrentSaveName = saveName;
 		Action<AsyncOperation> action = loadingGameSceneWithUniqueObjectsFineshed;
+		DeletePreSave();
 		LoadSceneWithParam(saveName, action);
 
+	}
+	public void DeletePreSave()
+	{
+		fileManager.PreSaveDirectory.Delete(true);
+		fileManager.PreSaveDirectory.Create();
 	}
 	public void LoadScene(string scaneName)
 	{
@@ -187,7 +199,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		LoadSceneWithParam(CurrentSaveName, action, scaneName);
 	}
 
-	private void LoadSceneWithParam(string saveName, Action<AsyncOperation> action, string sceneName=null)
+	private void LoadSceneWithParam(string saveName, Action<AsyncOperation> action, string sceneName = null)
 	{
 		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
 		if (!(saveDirectory?.Exists == true))
@@ -237,6 +249,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 			loadingScene.Load(sceneModel);
 		}
+		ExternalVoidsOnLoadFinished();
 
 
 	}
@@ -246,7 +259,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 
 
-		(var sceneToLoadFile,var saveDirectory) = GetFileAndDirectoryToLoad();
+		(var sceneToLoadFile, var saveDirectory) = GetFileAndDirectoryToLoad();
 
 
 		if (sceneToLoadFile.Exists)
@@ -263,17 +276,22 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 			loadingScene.Load(sceneModel);
 		}
+		ExternalVoidsOnLoadFinished();
 
 
 	}
-	public (FileInfo,DirectoryInfo) GetFileAndDirectoryToLoad()
+	private void ExternalVoidsOnLoadFinished()
+	{
+		externalOnLoadFinished();
+	}
+	public (FileInfo, DirectoryInfo) GetFileAndDirectoryToLoad()
 	{
 		FileInfo resultFile = null;
 		DirectoryInfo resultDirectory = fileManager.PreSaveDirectory;
 
 		var scenesPreDirectory = new DirectoryInfo(fileManager.PreSaveDirectory + "\\Scenes");
 		resultFile = new FileInfo(scenesPreDirectory + $"\\{SceneManager.GetActiveScene().name}.json");
-		if (resultFile == null)
+		if (!resultFile.Exists)
 		{
 			resultDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{CurrentSaveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
 			var scenesDirectory = new DirectoryInfo(resultDirectory + "\\Scenes");
@@ -286,14 +304,38 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 	private static List<UniqueObjectModel> LoadUniqueObjects(DirectoryInfo saveDirectory, SceneSaver loadingScene)
 	{
+
 		var uniqueObjects = new List<UniqueObjectModel>();
+		if (fileManager.PreSaveDirectory.Exists)
+		{
+			var presaveUniqueObjectsDirectory = new DirectoryInfo(fileManager.PreSaveDirectory + "\\UniqueObjects");
+			if (presaveUniqueObjectsDirectory.Exists)
+			{
+				var presaveuniqueObjectsFiles = presaveUniqueObjectsDirectory.GetFiles();
+
+				foreach (var item in presaveuniqueObjectsFiles)
+				{
+					var uniqueObjectText = new StreamReader(item.FullName).ReadToEnd();
+					var uniqueModel = JsonConvert.DeserializeObject<UniqueObjectModel>(uniqueObjectText);
+					uniqueObjects.Add(uniqueModel);
+
+				}
+			}
+		}
+
 		var uniqueObjectsDirectory = new DirectoryInfo(saveDirectory + "\\UniqueObjects");
 		var uniqueObjectsFiles = uniqueObjectsDirectory.GetFiles();
+
+
 		foreach (var item in uniqueObjectsFiles)
 		{
+
 			var uniqueObjectText = new StreamReader(item.FullName).ReadToEnd();
 			var uniqueModel = JsonConvert.DeserializeObject<UniqueObjectModel>(uniqueObjectText);
-			uniqueObjects.Add(uniqueModel);
+			if (!uniqueObjectsFiles.Where(x => x.Name == uniqueModel.Name).Any())
+			{
+				uniqueObjects.Add(uniqueModel);
+			}
 
 		}
 		var uniqueObjectsToScene = uniqueObjects.Where(x => x.SceneName == loadingScene.name);
@@ -303,7 +345,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	public void Loadingsc()
 	{
 
-		
+
 	}
 
 	public System.Type getTT()
@@ -337,10 +379,10 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 public class GameSaverModel : ISaveModel
 {
 	public string CurrentSceneName { get; set; }
-	public override string SaveName { get => "gamesave"; set  { } }
+	public override string SaveName { get => "gamesave"; set { } }
 }
 
-public class UniqueObjectModel: ISaveModel
+public class UniqueObjectModel : ISaveModel
 {
 	public string SceneName { get; set; }
 	[JsonIgnore]

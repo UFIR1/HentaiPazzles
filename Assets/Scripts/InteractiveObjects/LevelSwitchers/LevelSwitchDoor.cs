@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelSwitchDoor : BaseInteractiveObject
 {
-    public string sceneName;
+	public string sceneName;
 	public string spawnPointName;
 	// Start is called before the first frame update
 	public override void Use(BaseHero Sender)

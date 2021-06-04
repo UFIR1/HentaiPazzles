@@ -9,12 +9,13 @@ public class GameController : MonoBehaviour
 	public static GameSaver gameSaver;
 	GameObject Canvas;
 	public GameMenuController gameMenuController;
-	string spawnPointName;
+	static string spawnPointName;
 	public GameObject Player;
 	public RecourseManager RecourseManager;
 
 	private void Awake()
 	{
+		
 		gameController = this;
         DontDestroyOnLoad(gameObject);
 		if (GameObject.FindGameObjectsWithTag(Tags.GameController.ToString()).Length > 1)
@@ -29,28 +30,35 @@ public class GameController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-        HotKeysHelper.currentInputType = InputType.Player;
+		GameSaver.externalOnLoadFinished += SaverOnLevelLoaded;
+		HotKeysHelper.currentInputType = InputType.Player;
 		Init();
 	}
 	private void OnLevelWasLoaded(int level)
 	{
+
 		gameController = this;
 		gameSaver = gameObject.GetComponent<GameSaver>();
 		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
 		Init();
+
+	}
+	public void SaverOnLevelLoaded()
+	{
+		
 		if (Player != null)
 		{
 			if (!string.IsNullOrEmpty(spawnPointName))
 			{
 				var spawnPoint = GameObject.Find(spawnPointName);
 				Player.transform.position = spawnPoint.transform.position;
+				spawnPointName = null;
 			}
 		}
 		else
 		{
 			Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
 		}
-
 	}
 
 	private void Init()
@@ -77,7 +85,7 @@ public class GameController : MonoBehaviour
 	}
 	public void LoadLevel(string sceneName,string spawnPointName)
 	{
-		this.spawnPointName = spawnPointName;
+		GameController.spawnPointName = spawnPointName;
 		if (Player!=null)
 		{
 			GameObject.DontDestroyOnLoad(Player);
