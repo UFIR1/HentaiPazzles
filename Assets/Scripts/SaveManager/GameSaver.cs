@@ -242,39 +242,31 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 	private void LoadSceneWithParam(string saveName, Action<AsyncOperation> action, string sceneName = null)
 	{
-		if (saveName != null)
+		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
+		if (!(saveDirectory?.Exists == true))
 		{
-			var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
-			if (!(saveDirectory?.Exists == true))
-			{
-				throw new Exception("Сохранение отсутствует");
-			}
-			var gameConfigFile = new FileInfo(saveDirectory + "\\GameSettings.json");
-			var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
-			if (gameConfigFile.Exists && scenesDirectory.Exists)
-			{
-				var gameConfigReader = new StreamReader(gameConfigFile.OpenRead());
-				var gameConfigText = gameConfigReader.ReadToEnd();
-				gameConfigReader.Close();
-				if (sceneName == null)
-				{
-					var gameConfig = JsonConvert.DeserializeObject<GameSaverModel>(gameConfigText);
-					loadingSceneOperation = SceneManager.LoadSceneAsync(gameConfig.CurrentSceneName);
-					loadingSceneOperation.completed += action;
-				}
-				else
-				{
-					loadingSceneOperation = SceneManager.LoadSceneAsync(sceneName);
-					loadingSceneOperation.completed += action;
-				}
-				Loadingsc();
-
-			}
+			throw new Exception("Сохранение отсутствует");
 		}
-		else
+		var gameConfigFile = new FileInfo(saveDirectory + "\\GameSettings.json");
+		var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
+		if (gameConfigFile.Exists && scenesDirectory.Exists)
 		{
-			loadingSceneOperation = SceneManager.LoadSceneAsync(sceneName);
-			loadingSceneOperation.completed += action;
+			var gameConfigReader = new StreamReader(gameConfigFile.OpenRead());
+			var gameConfigText = gameConfigReader.ReadToEnd();
+			gameConfigReader.Close();
+			if (sceneName == null)
+			{
+				var gameConfig = JsonConvert.DeserializeObject<GameSaverModel>(gameConfigText);
+				loadingSceneOperation = SceneManager.LoadSceneAsync(gameConfig.CurrentSceneName);
+				loadingSceneOperation.completed += action;
+			}
+			else
+			{
+				loadingSceneOperation = SceneManager.LoadSceneAsync(sceneName);
+				loadingSceneOperation.completed += action;
+			}
+			Loadingsc();
+
 		}
 	}
 
