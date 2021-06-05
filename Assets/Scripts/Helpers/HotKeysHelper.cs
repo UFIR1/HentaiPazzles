@@ -5,7 +5,8 @@ using UnityEngine;
 
 public static class HotKeysHelper
 {
-	public static InputType currentInputType = InputType.Global;
+	private static InputType currentInputType = InputType.Global;
+	private static float lastTimeScale = 1;
 	public static KeyCode MoveUp { get; set; } = KeyCode.W;
 	public static KeyCode MoveLeft { get; set; } = KeyCode.A;
 	public static KeyCode MoveRight { get; set; } = KeyCode.D;
@@ -15,10 +16,28 @@ public static class HotKeysHelper
 	public static KeyCode Reload { get; set; } = KeyCode.R;
 	public static KeyCode SwitchBulletType { get; set; } = KeyCode.B;
 	public static KeyCode SelectFirstWeapon { get; set; } = KeyCode.Alpha1;
+	public static InputType CurrentInputType
+	{
+		get => currentInputType; set
+		{
+			if (value == InputType.Global&& currentInputType!= InputType.Global)
+			{
+				lastTimeScale = Time.timeScale;
+				Time.timeScale = 0;
+				currentInputType = value;
+
+			}
+			if (value != InputType.Global)
+			{
+				Time.timeScale = lastTimeScale;
+				currentInputType = value;
+			}
+		}
+	}
 
 	static public bool PlayerKey(bool keyPress)
 	{
-		return (currentInputType == InputType.Player) && keyPress;
+		return (CurrentInputType == InputType.Player) && keyPress;
 	}
 	static public bool GlobalKey(bool keyPress)
 	{
@@ -26,12 +45,12 @@ public static class HotKeysHelper
 	}
 	static public bool MenuKey(bool keyPress)
 	{
-		return (currentInputType == InputType.Menu) && keyPress;
+		return (CurrentInputType == InputType.Menu) && keyPress;
 	}
 	static public bool CurrentKeyCode(out KeyCode? keyCode)
 	{
 		keyCode = null;
-		if (currentInputType == InputType.HotKeySet && Event.current.keyCode != KeyCode.Escape)
+		if (CurrentInputType == InputType.HotKeySet && Event.current.keyCode != KeyCode.Escape)
 		{
 			if (Event.current.isKey)
 			{

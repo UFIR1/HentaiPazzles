@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour
 	void Start()
     {
 		GameSaver.externalOnLoadFinished += SaverOnLevelLoaded;
-		HotKeysHelper.currentInputType = InputType.Player;
+		HotKeysHelper.CurrentInputType = InputType.Player;
 		Init();
 	}
 	private void OnLevelWasLoaded(int level)

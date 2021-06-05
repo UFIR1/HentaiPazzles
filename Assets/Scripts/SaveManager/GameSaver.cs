@@ -28,6 +28,37 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		}
 	}
 
+	public List<GameSaverViewModel> GetExistingSaves()
+	{
+		var savesPath = new DirectoryInfo(fileManager.MainDirectory.FullName);
+		var result = new List<GameSaverViewModel>();
+		foreach (var item in savesPath.GetDirectories().Where(x => x.Name.Contains("Save_")))
+		{
+			var newSaveView = new GameSaverViewModel()
+			{
+				Name = item.Name.Replace("Save_", ""),
+				CreateTime = item.CreationTime,
+				
+
+			};
+			if (item.GetDirectories().Any())
+			{
+				newSaveView.UpdateTime = item.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault().CreationTime;
+			}
+			Texture2D texture = new Texture2D(ScreenShot.Width, ScreenShot.Height);
+			var saveImg = new FileInfo(item.FullName + $"{FileKeyWord.GameImg}.png");
+			if (saveImg.Exists)
+			{
+				byte[] bytes = File.ReadAllBytes(saveImg.FullName);
+				texture.LoadImage(bytes);
+				texture.Apply();
+				newSaveView.Texture = texture;
+			}
+			result.Add(newSaveView);
+		}
+		return result;
+	}
+
 	[ContextMenu("SaveCurrentScene")]
 	public bool SaveCurrentScene()
 	{
@@ -48,8 +79,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		sceneWriter.Write(result);
 		sceneWriter.Close();
 
-
-		Process.Start(@$"{fileManager.MainDirectory.FullName}");
+		//Process.Start(@$"{fileManager.MainDirectory.FullName}");
 
 		var gameSattingsModel = Save();
 
@@ -67,14 +97,9 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		SaveUniqueObjects();
 		return true;
 	}
-	private void OnLevelWasLoaded(int level)
-	{
-
-	}
 
 	public void SaveUniqueObjects()
 	{
-		string saveName = "testSave";
 		var saveDirectory = new DirectoryInfo(fileManager.PreSaveDirectory.FullName);
 		var uniqueObjectsDirectory = new DirectoryInfo(saveDirectory + $"\\UniqueObjects");
 		if (!uniqueObjectsDirectory.Exists)
@@ -90,8 +115,8 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		foreach (var item in objectsModels)
 		{
 			var savebleFile = new FileInfo(uniqueObjectsDirectory + $"\\object_{item.Name}.json");
-
-			var writer = new StreamWriter(File.Open(savebleFile.FullName, FileMode.Create, FileAccess.ReadWrite));
+			var writerStream = File.Open(savebleFile.FullName, FileMode.Create, FileAccess.ReadWrite);
+			var writer = new StreamWriter(writerStream);
 			var textToWrite = JsonConvert.SerializeObject(item, new JsonSerializerSettings
 			{
 				ContractResolver = new CustomContractResolver()
@@ -102,32 +127,47 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	}
 
 	[ContextMenu("SaveGame")]
-	public void SaveGame()
+	public void SaveGame(string saveName)
 	{
-		string saveName = "testSave";
 
-		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}");
-		if (!saveDirectory.Exists)
+		var oldMainSaveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{CurrentSaveName}");
+		var newMainSaveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}");
+		if (!newMainSaveDirectory.Exists)
 		{
-			saveDirectory.Create();
+			newMainSaveDirectory.Create();
 		}
-		var oldSaveDirectory = saveDirectory.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
-		if (oldSaveDirectory?.Exists == true)
+		if (saveName != CurrentSaveName)
 		{
-			foreach (var item in saveDirectory.GetDirectories().Where(x => x.Name != oldSaveDirectory.Name))
+
+		}
+		DirectoryInfo oldSaveDirectory = null;
+		if (oldMainSaveDirectory.Exists)
+		{
+			if (oldMainSaveDirectory.GetDirectories().Any())
 			{
-				item.Delete(true);
+				oldSaveDirectory = oldMainSaveDirectory.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
+				if (oldMainSaveDirectory != null)
+				{
+					if (oldSaveDirectory?.Exists == true)
+					{
+						foreach (var item in oldMainSaveDirectory.GetDirectories().Where(x => x.Name != oldSaveDirectory.Name))
+						{
+							item.Delete(true);
+						}
+					}
+				}
 			}
 		}
+
 
 		/*if (!fileManager.PreSaveDirectory.Exists)
 		{
 			throw new System.Exception($"File integrity violated: Directory \"{fileManager.PreSaveDirectory.FullName}\" deleted");
 		}*/
 
+		
 
-
-		var newSaveDirectory = new DirectoryInfo(saveDirectory + $"\\{DateTime.UtcNow.ToString("yyyy-MM-ddTHH-mm-ss")}");
+		var newSaveDirectory = new DirectoryInfo(newMainSaveDirectory + $"\\{DateTime.UtcNow.ToString("yyyy-MM-ddTHH-mm-ss")}");
 		newSaveDirectory.Create();
 		var PreSavePath = fileManager.PreSaveDirectory.FullName;
 		var NewPath = newSaveDirectory.FullName;
@@ -138,13 +178,14 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		//Скопировать все файлы. И перезаписать(если такие существуют)
 		foreach (string newPath in Directory.GetFiles(PreSavePath, "*.*", SearchOption.AllDirectories))
 			File.Copy(newPath, newPath.Replace(PreSavePath, NewPath), true);
+
 		if (oldSaveDirectory != null)
 		{
 			CreateDirectoryTree(oldSaveDirectory, newSaveDirectory);
 		}
 
 		oldSaveDirectory?.Delete(true);
-		Process.Start(@$"{fileManager.MainDirectory.FullName}");
+		//Process.Start(@$"{fileManager.MainDirectory.FullName}");
 
 	}
 
@@ -160,7 +201,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 				{
 					if (!newFiles.Where(x => x.Name == item.Name).Any())
 					{
-						File.Create(newWorkDirectory.FullName + $"\\{item.Name}");
+						File.Create(newWorkDirectory.FullName + $"\\{item.Name}").Close();
 					}
 				}
 			}
@@ -179,9 +220,9 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	}
 	private AsyncOperation loadingSceneOperation;
 	[ContextMenu("LoadGame")]
-	public void LoadGame()
+	public void LoadGame(string saveName)
 	{
-		string saveName = "testSave";
+
 		CurrentSaveName = saveName;
 		Action<AsyncOperation> action = loadingGameSceneWithUniqueObjectsFineshed;
 		DeletePreSave();
@@ -201,43 +242,52 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 	private void LoadSceneWithParam(string saveName, Action<AsyncOperation> action, string sceneName = null)
 	{
-		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
-		if (!(saveDirectory?.Exists == true))
+		if (saveName != null)
 		{
-			throw new Exception("Сохранение отсутствует");
-		}
-		var gameConfigFile = new FileInfo(saveDirectory + "\\GameSettings.json");
-		var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
-		if (gameConfigFile.Exists && scenesDirectory.Exists)
-		{
-			var gameConfigReader = new StreamReader(gameConfigFile.OpenRead());
-			var gameConfigText = gameConfigReader.ReadToEnd();
-			gameConfigReader.Close();
-			if (sceneName == null)
+			var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
+			if (!(saveDirectory?.Exists == true))
 			{
-				var gameConfig = JsonConvert.DeserializeObject<GameSaverModel>(gameConfigText);
-				loadingSceneOperation = SceneManager.LoadSceneAsync(gameConfig.CurrentSceneName);
-				loadingSceneOperation.completed += action;
+				throw new Exception("Сохранение отсутствует");
 			}
-			else
+			var gameConfigFile = new FileInfo(saveDirectory + "\\GameSettings.json");
+			var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
+			if (gameConfigFile.Exists && scenesDirectory.Exists)
 			{
-				loadingSceneOperation = SceneManager.LoadSceneAsync(sceneName);
-				loadingSceneOperation.completed += action;
-			}
-			Loadingsc();
+				var gameConfigReader = new StreamReader(gameConfigFile.OpenRead());
+				var gameConfigText = gameConfigReader.ReadToEnd();
+				gameConfigReader.Close();
+				if (sceneName == null)
+				{
+					var gameConfig = JsonConvert.DeserializeObject<GameSaverModel>(gameConfigText);
+					loadingSceneOperation = SceneManager.LoadSceneAsync(gameConfig.CurrentSceneName);
+					loadingSceneOperation.completed += action;
+				}
+				else
+				{
+					loadingSceneOperation = SceneManager.LoadSceneAsync(sceneName);
+					loadingSceneOperation.completed += action;
+				}
+				Loadingsc();
 
+			}
+		}
+		else
+		{
+			loadingSceneOperation = SceneManager.LoadSceneAsync(sceneName);
+			loadingSceneOperation.completed += action;
 		}
 	}
 
 	private void loadingGameSceneWithUniqueObjectsFineshed(AsyncOperation obj)
 	{
-		string saveName = "testSave";
-		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
+		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{CurrentSaveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
 		var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
 		var sceneToLoadFile = new FileInfo(scenesDirectory + $"\\{SceneManager.GetActiveScene().name}.json");
 		if (sceneToLoadFile.Exists)
 		{
-			string sceneText = new StreamReader(sceneToLoadFile.FullName).ReadToEnd();
+			var sceneReader = new StreamReader(sceneToLoadFile.FullName);
+			string sceneText = sceneReader.ReadToEnd();
+			sceneReader.Close();
 			var sceneModel = JsonConvert.DeserializeObject<SceneSaverModel>(sceneText);
 			var loadingScene = GameObject.FindObjectOfType<SceneSaver>();
 
@@ -264,7 +314,9 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 		if (sceneToLoadFile.Exists)
 		{
-			string sceneText = new StreamReader(sceneToLoadFile.FullName).ReadToEnd();
+			var sceneReader = new StreamReader(sceneToLoadFile.FullName);
+			string sceneText = sceneReader.ReadToEnd();
+			sceneReader.Close();
 			var sceneModel = JsonConvert.DeserializeObject<SceneSaverModel>(sceneText);
 			var loadingScene = GameObject.FindObjectOfType<SceneSaver>();
 
@@ -315,7 +367,9 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 				foreach (var item in presaveuniqueObjectsFiles)
 				{
-					var uniqueObjectText = new StreamReader(item.FullName).ReadToEnd();
+					var uniqueObjectReader = new StreamReader(item.FullName);
+					var uniqueObjectText = uniqueObjectReader.ReadToEnd();
+					uniqueObjectReader.Close();
 					var uniqueModel = JsonConvert.DeserializeObject<UniqueObjectModel>(uniqueObjectText);
 					uniqueObjects.Add(uniqueModel);
 
@@ -329,8 +383,9 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 		foreach (var item in uniqueObjectsFiles)
 		{
-
-			var uniqueObjectText = new StreamReader(item.FullName).ReadToEnd();
+			var uniqueObjectReader = new StreamReader(item.FullName);
+			var uniqueObjectText = uniqueObjectReader.ReadToEnd();
+			uniqueObjectReader.Close();
 			var uniqueModel = JsonConvert.DeserializeObject<UniqueObjectModel>(uniqueObjectText);
 			if (!uniqueObjectsFiles.Where(x => x.Name == uniqueModel.Name).Any())
 			{
@@ -340,6 +395,15 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		}
 		var uniqueObjectsToScene = uniqueObjects.Where(x => x.SceneName == loadingScene.name);
 		return uniqueObjects;
+	}
+
+	public void DeleteSave(string savename)
+	{
+		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory+$"\\Save_{savename}");
+		if (saveDirectory.Exists)
+		{
+			saveDirectory.Delete(true);
+		}
 	}
 
 	public void Loadingsc()
@@ -376,10 +440,26 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		};
 	}
 }
+public class GameSaverViewModel
+{
+	public string Name { get; set; }
+	public Texture2D Texture { get; set; }
+	public DateTime CreateTime { get; set; }
+	public DateTime UpdateTime { get; set; }
+
+}
 public class GameSaverModel : ISaveModel
 {
 	public string CurrentSceneName { get; set; }
 	public override string SaveName { get => "gamesave"; set { } }
+}
+public static class ScreenShot
+{
+	private static int width = 100;
+	private static int height = 100;
+
+	public static int Width { get => width; set => width = value; }
+	public static int Height { get => height; set => height = value; }
 }
 
 public class UniqueObjectModel : ISaveModel

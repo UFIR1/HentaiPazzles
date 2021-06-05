@@ -37,3 +37,9 @@ public class SaveFileManager
 		}
 	}
 }
+public enum FileKeyWord
+{
+	GameSettings,
+	GameImg,
+	Scenes
+}
