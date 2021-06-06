@@ -10,6 +10,7 @@ public class SaveMenuController : MonoBehaviour
     public float step;
     public List<GameObject> keyElement;
     public TMP_InputField NewSaveName;
+    public bool itsSaveableCall;
     // Start is called before the first frame update
     void Start()
     {

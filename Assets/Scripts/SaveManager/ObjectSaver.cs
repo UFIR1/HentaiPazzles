@@ -68,6 +68,8 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 	public void Load(ObjectSaverModel model)
 	{
 		var OnSave = new List<ISaveble<ISaveModel>>();
+		SaveInstant = model.SaveInstant;
+		itsUniqueObject = model.ItsUniqueObj;
 		foreach (var item in scripts)
 		{
 			OnSave.Add(item as ISaveble<ISaveModel>);
@@ -101,6 +103,8 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 		result.PersonalHash = PersonalHash;
 		result.InstanceId = gameObject.GetInstanceID();
 		result.SaveInstant = SaveInstant;
+		result.ItsUniqueObj = itsUniqueObject;
+		
 		if (SaveInstant)
 		{
 			

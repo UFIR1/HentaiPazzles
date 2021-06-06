@@ -10,5 +10,6 @@ public class ObjectSaverModel : ISaveModel
 	public int InstanceId { get; set; }
 	public string PrefabPath { get; set; }
 	public bool SaveInstant { get; set; }
+	public bool ItsUniqueObj { get; set; }
 	public List<ISaveModel> SaveModels { get; set; }
 }

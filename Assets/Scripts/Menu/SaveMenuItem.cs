@@ -10,7 +10,8 @@ public class SaveMenuItem : MonoBehaviour
     public TextMeshProUGUI UpdateDateMash;
     public SaveMenuController saveController;
     public GameSaverViewModel myModel;
-    public void Init( GameSaverViewModel viewModel, SaveMenuController saveController)
+
+	public void Init( GameSaverViewModel viewModel, SaveMenuController saveController)
 	{
         this.myModel = viewModel;
         this.saveController = saveController;
@@ -21,6 +22,16 @@ public class SaveMenuItem : MonoBehaviour
         SaveNameMash.text = viewModel.Name;
         SaveDateMash.text = viewModel.CreateTime.ToString();
         UpdateDateMash.text = viewModel?.UpdateTime.ToString();
+        if (GameSaver.CurrentSaveName ==myModel.Name )
+		{
+            Image panelImage = null;
+			if (TryGetComponent<Image>(out panelImage))
+			{
+                var myColor = Color.green;
+                panelImage.color = new Color(myColor.r, myColor.g, myColor.b, panelImage.color.a);
+			}
+		}
+
     }
     public void ReSaveMe()
 	{

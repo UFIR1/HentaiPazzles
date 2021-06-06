@@ -752,6 +752,7 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 			var item = model.Weapons[i];
 			weapons[i].unlock = item.unlock;
 		}
+		
 		bullets = model.Bullets;
 	}
 

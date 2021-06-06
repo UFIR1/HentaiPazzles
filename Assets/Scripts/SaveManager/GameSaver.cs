@@ -21,11 +21,16 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	private void Awake()
 	{
 
+
 		fileManager = new SaveFileManager();
 		if (CurrentSceneName == null)
 		{
 			CurrentSceneName = SceneManager.GetActiveScene().name;
 		}
+#if UNITY_EDITOR
+		DeletePreSave();
+		CurrentSaveName = "DebugSave";
+#endif
 	}
 
 	public List<GameSaverViewModel> GetExistingSaves()
@@ -38,7 +43,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			{
 				Name = item.Name.Replace("Save_", ""),
 				CreateTime = item.CreationTime,
-				
+
 
 			};
 			if (item.GetDirectories().Any())
@@ -136,10 +141,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		{
 			newMainSaveDirectory.Create();
 		}
-		if (saveName != CurrentSaveName)
-		{
 
-		}
 		DirectoryInfo oldSaveDirectory = null;
 		if (oldMainSaveDirectory.Exists)
 		{
@@ -150,9 +152,12 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 				{
 					if (oldSaveDirectory?.Exists == true)
 					{
-						foreach (var item in oldMainSaveDirectory.GetDirectories().Where(x => x.Name != oldSaveDirectory.Name))
+						if (oldMainSaveDirectory.Name == newMainSaveDirectory.Name)
 						{
-							item.Delete(true);
+							foreach (var item in oldMainSaveDirectory.GetDirectories().Where(x => x.Name != oldSaveDirectory.Name))
+							{
+								item.Delete(true);
+							}
 						}
 					}
 				}
@@ -165,7 +170,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			throw new System.Exception($"File integrity violated: Directory \"{fileManager.PreSaveDirectory.FullName}\" deleted");
 		}*/
 
-		
+
 
 		var newSaveDirectory = new DirectoryInfo(newMainSaveDirectory + $"\\{DateTime.UtcNow.ToString("yyyy-MM-ddTHH-mm-ss")}");
 		newSaveDirectory.Create();
@@ -183,8 +188,10 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		{
 			CreateDirectoryTree(oldSaveDirectory, newSaveDirectory);
 		}
-
-		oldSaveDirectory?.Delete(true);
+		if (oldMainSaveDirectory.Name == newMainSaveDirectory.Name)
+		{
+			oldSaveDirectory?.Delete(true);
+		}
 		//Process.Start(@$"{fileManager.MainDirectory.FullName}");
 
 	}
@@ -231,7 +238,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	}
 	public void DeletePreSave()
 	{
-		fileManager.PreSaveDirectory.Delete(true);
+		fileManager.PreSaveDirectory?.Delete(true);
 		fileManager.PreSaveDirectory.Create();
 	}
 	public void LoadScene(string scaneName)
@@ -249,24 +256,31 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		}
 		var gameConfigFile = new FileInfo(saveDirectory + "\\GameSettings.json");
 		var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
+		GameSaverModel gameConfig= null;
+		string gameConfigText = null;
 		if (gameConfigFile.Exists && scenesDirectory.Exists)
 		{
-			var gameConfigReader = new StreamReader(gameConfigFile.OpenRead());
-			var gameConfigText = gameConfigReader.ReadToEnd();
+			var gameConfigReader = new StreamReader(gameConfigFile.FullName);
+			gameConfigText = gameConfigReader.ReadToEnd();
 			gameConfigReader.Close();
-			if (sceneName == null)
+			
+
+		}
+		if (sceneName == null)
+		{
+			if (gameConfigFile.Exists)
 			{
-				var gameConfig = JsonConvert.DeserializeObject<GameSaverModel>(gameConfigText);
+				gameConfig = JsonConvert.DeserializeObject<GameSaverModel>(gameConfigText);
 				loadingSceneOperation = SceneManager.LoadSceneAsync(gameConfig.CurrentSceneName);
 				loadingSceneOperation.completed += action;
+				return;
 			}
-			else
-			{
-				loadingSceneOperation = SceneManager.LoadSceneAsync(sceneName);
-				loadingSceneOperation.completed += action;
-			}
-			Loadingsc();
-
+		}
+		else
+		{
+			loadingSceneOperation = SceneManager.LoadSceneAsync(sceneName);
+			loadingSceneOperation.completed += action;
+			return;
 		}
 	}
 
@@ -391,18 +405,13 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 	public void DeleteSave(string savename)
 	{
-		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory+$"\\Save_{savename}");
+		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory + $"\\Save_{savename}");
 		if (saveDirectory.Exists)
 		{
 			saveDirectory.Delete(true);
 		}
 	}
 
-	public void Loadingsc()
-	{
-
-
-	}
 
 	public System.Type getTT()
 	{
