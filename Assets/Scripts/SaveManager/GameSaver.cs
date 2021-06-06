@@ -21,12 +21,16 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	private void Awake()
 	{
 
-
+		DontDestroyOnLoad(this);
 		fileManager = new SaveFileManager();
 		if (CurrentSceneName == null)
 		{
 			CurrentSceneName = SceneManager.GetActiveScene().name;
 		}
+
+	}
+	private void Start()
+	{
 #if UNITY_EDITOR
 		DeletePreSave();
 		CurrentSaveName = "DebugSave";
@@ -238,7 +242,10 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	}
 	public void DeletePreSave()
 	{
-		fileManager.PreSaveDirectory?.Delete(true);
+		if (fileManager.PreSaveDirectory.Exists)
+		{
+			fileManager.PreSaveDirectory?.Delete(true);
+		}
 		fileManager.PreSaveDirectory.Create();
 	}
 	public void LoadScene(string scaneName)

@@ -1091,6 +1091,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1981723978 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 212619513, guid: fc297b56f8ba4c94583fe545045e9c88,
+    type: 3}
+  m_PrefabInstance: {fileID: 3017648857936168483}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee52e25c542b4584d83846f297692c15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2089216816180839131
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1253,6 +1265,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 240240006, guid: fc297b56f8ba4c94583fe545045e9c88, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 240240006, guid: fc297b56f8ba4c94583fe545045e9c88, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 240240006, guid: fc297b56f8ba4c94583fe545045e9c88, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1981723978}
+    - target: {fileID: 240240006, guid: fc297b56f8ba4c94583fe545045e9c88, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 240240006, guid: fc297b56f8ba4c94583fe545045e9c88, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Repaint
+      objectReference: {fileID: 0}
+    - target: {fileID: 240240006, guid: fc297b56f8ba4c94583fe545045e9c88, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: SaveMenuController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 240240006, guid: fc297b56f8ba4c94583fe545045e9c88, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3017648858238936024, guid: fc297b56f8ba4c94583fe545045e9c88,
         type: 3}
       propertyPath: m_Name
