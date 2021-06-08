@@ -50,12 +50,13 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 
 			};
+			var saveDirectory = item.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
 			if (item.GetDirectories().Any())
 			{
-				newSaveView.UpdateTime = item.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault().CreationTime;
+				newSaveView.UpdateTime = saveDirectory.CreationTime;
 			}
 			Texture2D texture = new Texture2D(ScreenShot.Width, ScreenShot.Height);
-			var saveImg = new FileInfo(item.FullName + $"{FileKeyWord.GameImg}.png");
+			var saveImg = new FileInfo(saveDirectory.FullName + $"\\{FileKeyWord.GameImg}.jpg");
 			if (saveImg.Exists)
 			{
 				byte[] bytes = File.ReadAllBytes(saveImg.FullName);
@@ -188,6 +189,18 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		foreach (string newPath in Directory.GetFiles(PreSavePath, "*.*", SearchOption.AllDirectories))
 			File.Copy(newPath, newPath.Replace(PreSavePath, NewPath), true);
 
+		#region imgGenerator
+		var mainCamera = GameObject.FindGameObjectWithTag(Tags.MainCamera.ToString())?.GetComponent<Camera>();
+		if (mainCamera != null)
+		{
+			byte[] photoBytes = CreatePhoto(mainCamera,2);
+			var photoFile = new FileInfo(newSaveDirectory + $"\\{FileKeyWord.GameImg}.jpg");
+			var photoStream= File.Open(photoFile.FullName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+			photoStream.Write(photoBytes, 0, photoBytes.Length);
+			photoStream.Close();
+		}
+		#endregion
+
 		if (oldSaveDirectory != null)
 		{
 			CreateDirectoryTree(oldSaveDirectory, newSaveDirectory);
@@ -198,6 +211,25 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		}
 		//Process.Start(@$"{fileManager.MainDirectory.FullName}");
 
+	}
+
+	private static byte[] CreatePhoto(Camera mainCamera, int divisor)
+	{
+		var height = Screen.height / divisor;
+		var width = Screen.width / divisor;
+		var photo = new Texture2D(width, height, TextureFormat.RGBA32, false);
+		var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+		mainCamera.targetTexture = rt;
+		mainCamera.Render();
+		RenderTexture.active = mainCamera.targetTexture;
+		photo.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+		mainCamera.targetTexture = null;
+		RenderTexture.active = null;
+		DestroyImmediate(rt);
+		photo.Apply();
+		var bytes = photo.EncodeToJPG(100);
+		Destroy(photo);
+		return bytes;
 	}
 
 	private void CreateDirectoryTree(DirectoryInfo oldWorkDirectory, DirectoryInfo newWorkDirectory)
@@ -263,14 +295,14 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		}
 		var gameConfigFile = new FileInfo(saveDirectory + "\\GameSettings.json");
 		var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
-		GameSaverModel gameConfig= null;
+		GameSaverModel gameConfig = null;
 		string gameConfigText = null;
 		if (gameConfigFile.Exists && scenesDirectory.Exists)
 		{
 			var gameConfigReader = new StreamReader(gameConfigFile.FullName);
 			gameConfigText = gameConfigReader.ReadToEnd();
 			gameConfigReader.Close();
-			
+
 
 		}
 		if (sceneName == null)
