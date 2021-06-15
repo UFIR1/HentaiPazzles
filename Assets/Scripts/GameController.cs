@@ -36,7 +36,11 @@ public class GameController : MonoBehaviour
 	}
 	private void OnLevelWasLoaded(int level)
 	{
-
+		if (Player == null)
+		{
+			Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
+			DontDestroyOnLoad(Player);
+		}
 		gameController = this;
 		gameSaver = gameObject.GetComponent<GameSaver>();
 		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
@@ -48,16 +52,26 @@ public class GameController : MonoBehaviour
 		
 		if (Player != null)
 		{
-			if (!string.IsNullOrEmpty(spawnPointName))
-			{
-				var spawnPoint = GameObject.Find(spawnPointName);
-				Player.transform.position = spawnPoint.transform.position;
-				spawnPointName = null;
-			}
+			TeleportedPlayerOnSpawnPoint();
 		}
 		else
 		{
 			Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
+			DontDestroyOnLoad(Player);
+			if (Player != null)
+			{
+				TeleportedPlayerOnSpawnPoint();
+			}
+		}
+	}
+
+	private void TeleportedPlayerOnSpawnPoint()
+	{
+		if (!string.IsNullOrEmpty(spawnPointName))
+		{
+			var spawnPoint = GameObject.Find(spawnPointName);
+			Player.transform.position = spawnPoint.transform.position;
+			spawnPointName = null;
 		}
 	}
 
@@ -89,6 +103,7 @@ public class GameController : MonoBehaviour
 		if (Player!=null)
 		{
 			GameObject.DontDestroyOnLoad(Player);
+			Player.GetComponent<ObjectSaver>().dontDestroyMe = true;
 		}
 		gameSaver.LoadScene(sceneName);
 		

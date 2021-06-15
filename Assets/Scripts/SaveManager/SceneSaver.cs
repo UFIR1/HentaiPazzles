@@ -38,7 +38,7 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
         var destroed = new List<ObjIndexFinger>();
         foreach (var item in onDestroy)
         {
-            if (item.Saver != null)
+            if (item.Saver != null && item.Saver.dontDestroyMe==false)
             {
                 Destroy(item.Saver.gameObject);
                 destroed.Add(item);

@@ -60,6 +60,7 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 	public MonoBehaviour[] scripts;
 	public List<ISaveble<ISaveModel>> OnSave;
 	public bool itsUniqueObject;
+	public bool dontDestroyMe = false;
 
 	public Type getTT()
 	{
