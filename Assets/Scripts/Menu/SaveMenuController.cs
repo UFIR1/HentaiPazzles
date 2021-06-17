@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro ;
 
 public class SaveMenuController : MonoBehaviour
@@ -10,14 +11,29 @@ public class SaveMenuController : MonoBehaviour
     public float step;
     public List<GameObject> keyElement;
     public TMP_InputField NewSaveName;
-    public bool itsSaveableCall;
-    // Start is called before the first frame update
-    void Start()
+    public Button newSaveButton;
+    public TMP_InputField newSaveInputField;
+	private bool openWithSaves = false;
+	public bool OpenWithSaves { get => openWithSaves; set { openWithSaves = value; Repaint(); } }
+
+	private void OnEnable()
+	{
+        if (GameController.gameController.Player != null)
+        {
+            OpenWithSaves = false;
+        }
+	}
+	// Start is called before the first frame update
+	void Start()
     {
         Repaint();
     }
-    public void Repaint()
+	public void Repaint()
 	{
+		{//SetSaveButtons
+            newSaveButton.interactable = OpenWithSaves;
+            newSaveInputField.interactable = OpenWithSaves;
+		}
 		foreach (var item in keyElement)
 		{
             Destroy(item);
@@ -34,7 +50,7 @@ public class SaveMenuController : MonoBehaviour
 
             var setter = newElement.GetComponent<SaveMenuItem>();
             var newElementTransform = newElement.GetComponent<RectTransform>();
-            setter.Init(item,this);
+            setter.Init(item,this,OpenWithSaves);
             sumHeight += newElementTransform.rect.height + step;
             i++;
         }

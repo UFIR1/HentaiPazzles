@@ -209,6 +209,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		{
 			oldSaveDirectory?.Delete(true);
 		}
+		CurrentSaveName = saveName;
 		//Process.Start(@$"{fileManager.MainDirectory.FullName}");
 
 	}

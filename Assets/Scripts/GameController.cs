@@ -36,6 +36,12 @@ public class GameController : MonoBehaviour
 	}
 	private void OnLevelWasLoaded(int level)
 	{
+
+		Init();
+
+	}
+	public void SaverOnLevelLoaded()
+	{
 		if (Player == null)
 		{
 			Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
@@ -45,11 +51,6 @@ public class GameController : MonoBehaviour
 		gameSaver = gameObject.GetComponent<GameSaver>();
 		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
 		Init();
-
-	}
-	public void SaverOnLevelLoaded()
-	{
-		
 		if (Player != null)
 		{
 			TeleportedPlayerOnSpawnPoint();
@@ -81,6 +82,10 @@ public class GameController : MonoBehaviour
 		if (Canvas != null)
 		{
 			gameMenuController = Canvas.GetComponent<GameMenuController>();
+		}
+		if (Player == null)
+		{
+			Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
 		}
 	}
 

@@ -12,6 +12,7 @@ public class GameMenuController : MonoBehaviour
 	GameObject MainMenu;
 	public InputType LastPlayInputType = InputType.Player;
 	GameObject[] MenuPanels;
+	public SaveMenuController saveMenuController;
 	float LastTimeScale = 1;
 	private void Awake()
 	{
