@@ -22,7 +22,7 @@ public class StoredWeapon : BaseConsumables, IInteractive
 			usableTextObj = Instantiate(blankUsableTextObj, usedTextPlace.position, blankUsableTextObj.transform.rotation, transform);
 			usableTextMesh = usableTextObj.GetComponent<TextMeshPro>();
 		}
-		usableTextMesh.text = $"Press {HotKeysHelper.Interaction}\n to interaction";
+		usableTextMesh.text = $"Press {HotKeysHelper.Interaction}\n to interact";
 		usableTextObj.SetActive(true);
 	}
 	public virtual void OnNotReadyToUse()

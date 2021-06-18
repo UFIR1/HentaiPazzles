@@ -16,5 +16,6 @@ public enum Tags
     SpawnPoint,
     Consumables,
     SettingsButton,
-    PlayerHud
+    PlayerHud,
+    MainCamera
 }

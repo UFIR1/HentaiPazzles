@@ -6,45 +6,74 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
 	public static GameController gameController;
+	public static GameSaver gameSaver;
 	GameObject Canvas;
 	public GameMenuController gameMenuController;
-	string spawnPointName;
+	static string spawnPointName;
 	public GameObject Player;
 	public RecourseManager RecourseManager;
 
 	private void Awake()
 	{
+		
+		gameController = this;
         DontDestroyOnLoad(gameObject);
 		if (GameObject.FindGameObjectsWithTag(Tags.GameController.ToString()).Length > 1)
 		{
 			Destroy(gameObject);
 		}
 		gameController = this;
+		gameSaver = gameObject.GetComponent<GameSaver>();
+		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
 		Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
 	}
 	// Start is called before the first frame update
 	void Start()
     {
-        HotKeysHelper.currentInputType = InputType.Player;
+		GameSaver.externalOnLoadFinished += SaverOnLevelLoaded;
+		HotKeysHelper.CurrentInputType = InputType.Player;
 		Init();
 	}
 	private void OnLevelWasLoaded(int level)
 	{
+
+		Init();
+
+	}
+	public void SaverOnLevelLoaded()
+	{
+		if (Player == null)
+		{
+			Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
+			DontDestroyOnLoad(Player);
+		}
 		gameController = this;
+		gameSaver = gameObject.GetComponent<GameSaver>();
+		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
 		Init();
 		if (Player != null)
 		{
-			if (!string.IsNullOrEmpty(spawnPointName))
-			{
-				var spawnPoint = GameObject.Find(spawnPointName);
-				Player.transform.position = spawnPoint.transform.position;
-			}
+			TeleportedPlayerOnSpawnPoint();
 		}
 		else
 		{
 			Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
+			DontDestroyOnLoad(Player);
+			if (Player != null)
+			{
+				TeleportedPlayerOnSpawnPoint();
+			}
 		}
+	}
 
+	private void TeleportedPlayerOnSpawnPoint()
+	{
+		if (!string.IsNullOrEmpty(spawnPointName))
+		{
+			var spawnPoint = GameObject.Find(spawnPointName);
+			Player.transform.position = spawnPoint.transform.position;
+			spawnPointName = null;
+		}
 	}
 
 	private void Init()
@@ -53,6 +82,10 @@ public class GameController : MonoBehaviour
 		if (Canvas != null)
 		{
 			gameMenuController = Canvas.GetComponent<GameMenuController>();
+		}
+		if (Player == null)
+		{
+			Player = GameObject.FindGameObjectWithTag(Tags.Player.ToString());
 		}
 	}
 
@@ -69,14 +102,15 @@ public class GameController : MonoBehaviour
 			}
 		}
 	}
-	public void LoadLevel(int sceneBuilNumber,string spawnPointName, LoadSceneMode loadSceneMode)
+	public void LoadLevel(string sceneName,string spawnPointName)
 	{
-		this.spawnPointName = spawnPointName;
+		GameController.spawnPointName = spawnPointName;
 		if (Player!=null)
 		{
 			GameObject.DontDestroyOnLoad(Player);
+			Player.GetComponent<ObjectSaver>().dontDestroyMe = true;
 		}
-		SceneManager.LoadScene(sceneBuilNumber, loadSceneMode);
+		gameSaver.LoadScene(sceneName);
 		
 	}
 

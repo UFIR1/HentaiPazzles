@@ -78,7 +78,7 @@ public class HotKeySetter : MonoBehaviour
 	}
 	public void Click()
 	{
-		HotKeysHelper.currentInputType = InputType.HotKeySet;
+		HotKeysHelper.CurrentInputType = InputType.HotKeySet;
 		foreach (var item in hotKeys)
 		{
 			item.waitToKey = false;

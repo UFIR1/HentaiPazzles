@@ -5,100 +5,97 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class SceneSaver : MonoBehaviour
+public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISaveble<ISaveModel>
 {
-
-	
-	[ContextMenu("SaveFile")]
-    public void SaveFile()
-    {
-        var objectSavers = GameObject.FindObjectsOfType<ObjectSaver>();
-        var OnSave =  new List<ISaveble<ISaveModel>>();
-		foreach (var item in objectSavers)
-		{
-            OnSave.Add(item as ISaveble<ISaveModel>);
-		}
-        var qwe = new DirectoryInfo(Application.persistentDataPath + "\\Saves");
-        if (!qwe.Exists)
-        {
-            qwe.Create();
-        }
-        var zxc = new FileInfo(qwe + "\\PlayerSave.json");
-        if (!zxc.Exists)
-        {
-            zxc.Create();
-        }
-        List<ISaveModel> modelsToSave = new List<ISaveModel>();
-		foreach (var item in OnSave)
-		{
-            modelsToSave.Add(item.Save());
-		}
-        var asd = JsonConvert.SerializeObject(modelsToSave, new JsonSerializerSettings
-        {
-            ContractResolver = new CustomContractResolver()
-        });
-     
-        var writer = new StreamWriter(zxc.FullName);
-        writer.Write(asd);
-        writer.Close();
-        Process.Start(@$"{qwe.FullName}");
-
+    public string SaneName;
+	private void Awake()
+	{
+        SaneName = gameObject.scene.name;
     }
-    [ContextMenu("Loaddd")]
-    public void Loaddd()
-    {
-        var qwe = new DirectoryInfo(Application.persistentDataPath + "\\Saves");
-        if (!qwe.Exists)
-        {
-            qwe.Create();
-        }
-        var zxc = new FileInfo(qwe + "\\PlayerSave.json");
-        if (!zxc.Exists)
-        {
-            zxc.Create();
-        }
 
-        var reader = new StreamReader(zxc.FullName);
-        var raaa = reader.ReadToEnd();
-        var ccccc = JsonConvert.DeserializeObject<List<ObjectSaverModel>>(raaa);
-        var onDestroy = ObjectSaver.UnicalHashController.Where(x => !ccccc.Where(y => y.InstanceId == x.Key).Any() && !ccccc.Where(y => y.PersonalHash == x.Value).Any()).ToList();
+    public System.Type getTT()
+	{
+        return typeof(SceneSaverModel);
+	}
+
+	public void Load(ISaveModel model)
+	{
+        Load(model);
+	}
+
+	ISaveModel ISaveble<ISaveModel>.Save()
+	{
+        return Save();
+	}
+
+	public void Load(SceneSaverModel model)
+	{
+
+        var ccccc = model.SaveableObjects;
+        var onDestroy = ObjectSaver.UniqueHashController.Where(x => !ccccc.Where(y => y.InstanceId == x.Key).Any() && !ccccc.Where(y => y.PersonalHash == x.Value).Any()).ToList();
         var destroed = new List<ObjIndexFinger>();
-		foreach (var item in onDestroy)
-		{
-            if (item.Saver!=null)
+        foreach (var item in onDestroy)
+        {
+            if (item.Saver != null && item.Saver.dontDestroyMe==false)
             {
                 Destroy(item.Saver.gameObject);
                 destroed.Add(item);
             }
-		}
-		foreach (var item in destroed)
-		{
-            ObjectSaver.UnicalHashController.Remove(item);
+        }
+        foreach (var item in destroed)
+        {
+            ObjectSaver.UniqueHashController.Remove(item);
         }
         for (int i = 0; i < ccccc.Count; i++)
-		{
-            var asd = ObjectSaver.UnicalHashController.ToList();
-            var sameObj= ObjectSaver.UnicalHashController.Where(x => x.Key == ccccc[i].InstanceId || x.Value == ccccc[i].PersonalHash).ToList();
-			if (!sameObj.Any())
-			{
-				if (ccccc[i].SaveInstant)
-				{
-                    var pref = Resources.Load<GameObject>(ccccc[i].PrefabPath.Replace("Assets/Resources/", "").Replace(".prefab", ""));
-                    var obj= GameObject.Instantiate(pref);
-                    obj.GetComponent<ObjectSaver>().Load(ccccc[i]);
+        {
+            var asd = ObjectSaver.UniqueHashController.ToList();
+            var sameObj = ObjectSaver.UniqueHashController.Where(x => x.Key == ccccc[i].InstanceId || x.Value == ccccc[i].PersonalHash).ToList();
+            if (!sameObj.Any())
+            {
+                if (ccccc[i].SaveInstant)
+                {
+                    try
+                    {
+                        var pref = Resources.Load<GameObject>(ccccc[i].PrefabPath.Replace("Assets/Resources/", "").Replace(".prefab", ""));
+                        var obj = GameObject.Instantiate(pref);
+                        obj.GetComponent<ObjectSaver>().Load(ccccc[i]);
+                    }
+					catch
+					{
+                        UnityEngine.Debug.LogError($"Type: {ccccc[i].ObjType} SaveName: {ccccc[i].SaveName} Path: {ccccc[i].PrefabPath}");
+					}
+                  
                 }
 
             }
-			else
-			{
+            else
+            {
                 var obj = sameObj.FirstOrDefault();
                 obj.Saver.Load(ccccc[i]);
             }
         }
-        
 
+    }
 
-
+    public SceneSaverModel Save()
+	{
+        var objectSavers = GameObject.FindObjectsOfType<ObjectSaver>().Where(x=>x.itsUniqueObject!=true);
+        var toSave = new List<ISaveble<ISaveModel>>();
+        foreach (var item in objectSavers)
+        {
+            toSave.Add(item as ISaveble<ISaveModel>);
+        }
+        var modelsToSave = new List<ObjectSaverModel>();
+		foreach (var item in toSave)
+		{
+            modelsToSave.Add(item.Save() as ObjectSaverModel);
+		}
+        var Result = new SceneSaverModel()
+        {
+            SaveableObjects = modelsToSave
+        };
+        return Result;
     }
 }

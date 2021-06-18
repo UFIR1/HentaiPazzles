@@ -71,9 +71,15 @@ public class ISaveModelConverter : JsonConverter
 			case nameof(BaseHeroSaveModel):
 				return JsonConvert.DeserializeObject<BaseHeroSaveModel>(jo.ToString(), SpecifiedSubclassConversion);
 			case nameof(TransformModel):
-				return JsonConvert.DeserializeObject<TransformModel>(jo.ToString(), SpecifiedSubclassConversion); ;
+				return JsonConvert.DeserializeObject<TransformModel>(jo.ToString(), SpecifiedSubclassConversion); 
 			case nameof(ObjectSaverModel):
-				return JsonConvert.DeserializeObject<ObjectSaverModel>(jo.ToString(), SpecifiedSubclassConversion); ;
+				return JsonConvert.DeserializeObject<ObjectSaverModel>(jo.ToString(), SpecifiedSubclassConversion);
+			case nameof(GameSaverModel):
+				return JsonConvert.DeserializeObject<GameSaverModel>(jo.ToString(), SpecifiedSubclassConversion);
+			case nameof(SceneSaverModel):
+				return JsonConvert.DeserializeObject<SceneSaverModel>(jo.ToString(), SpecifiedSubclassConversion);
+			case nameof(UniqueObjectModel):
+				return JsonConvert.DeserializeObject<UniqueObjectModel>(jo.ToString(), SpecifiedSubclassConversion);
 			default:
 				throw new Exception();
 		}

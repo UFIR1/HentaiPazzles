@@ -11,27 +11,32 @@ using Newtonsoft.Json.Linq;
 public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<ISaveModel>
 {
 	[JsonIgnore]
-	static public List<ObjIndexFinger> UnicalHashController = new List<ObjIndexFinger>();
-
-	private void Start()
+	 public static List<ObjIndexFinger> UniqueHashController = new List<ObjIndexFinger>();
+	private void Awake()
 	{
-		var contance = UnicalHashController.Where(x => x.Value == PersonalHash);
+		var contance = UniqueHashController.Where(x => x.Value == PersonalHash);
 		if (contance.Count() > 1)
 		{
 			personalHash = Guid.NewGuid().ToString();
 			var id = gameObject.GetInstanceID();
-			UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+			UniqueHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
 		}
-		contance = UnicalHashController.Where(x => x.Key == gameObject.GetInstanceID());
+		contance = UniqueHashController.Where(x => x.Key == gameObject.GetInstanceID());
 		if (contance.Count() == 0)
 		{
-			if (string.IsNullOrEmpty(personalHash) || UnicalHashController.Where(x => x.Value == PersonalHash).Count() > 0)
+			if (string.IsNullOrEmpty(personalHash) || UniqueHashController.Where(x => x.Value == PersonalHash).Count() > 0)
 			{
 				personalHash = Guid.NewGuid().ToString();
 			}
 			var id = gameObject.GetInstanceID();
-			UnicalHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
+			UniqueHashController.Add(new ObjIndexFinger() { Key = id, Value = personalHash, Saver = this });
 		}
+	}
+
+	private void Start()
+	{
+		
+		
 	}
 	private void Update()
 	{
@@ -40,20 +45,11 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 	}
 	private void OnValidate()
 	{
-		if (!Application.isPlaying)
-		{
-			
-
-
-			foreach (var item in UnicalHashController)
-			{
-				Debug.Log($"{gameObject.name} : {item.Key} : {item.Value}");
-			}
-		}
+		
 	}
 	private void OnDestroy()
 	{
-		UnicalHashController.Remove(UnicalHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
+		UniqueHashController.Remove(UniqueHashController.Where(x=>x.Key==gameObject.GetInstanceID()).FirstOrDefault());
 	}
 	[SerializeField]
 	private string personalHash = null;
@@ -63,7 +59,8 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 
 	public MonoBehaviour[] scripts;
 	public List<ISaveble<ISaveModel>> OnSave;
-
+	public bool itsUniqueObject;
+	public bool dontDestroyMe = false;
 
 	public Type getTT()
 	{
@@ -72,6 +69,8 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 	public void Load(ObjectSaverModel model)
 	{
 		var OnSave = new List<ISaveble<ISaveModel>>();
+		SaveInstant = model.SaveInstant;
+		itsUniqueObject = model.ItsUniqueObj;
 		foreach (var item in scripts)
 		{
 			OnSave.Add(item as ISaveble<ISaveModel>);
@@ -105,6 +104,8 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 		result.PersonalHash = PersonalHash;
 		result.InstanceId = gameObject.GetInstanceID();
 		result.SaveInstant = SaveInstant;
+		result.ItsUniqueObj = itsUniqueObject;
+		
 		if (SaveInstant)
 		{
 			
@@ -123,78 +124,6 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 		return Save();
 	}
 
-
-
-
-
-
-
-	/*
-    [ContextMenu("SaveFile")]
-    public void SaveFile()
-    {
-        OnSave = new List<ISaveble<ISaveModel>>();
-		foreach (var item in scripts)
-		{
-            OnSave.Add(item as ISaveble<ISaveModel>);
-		}
-        var qwe = new DirectoryInfo(Application.persistentDataPath + "\\Saves");
-        if (!qwe.Exists)
-        {
-            qwe.Create();
-        }
-        var zxc = new FileInfo(qwe + "\\PlayerSave.json");
-        if (!zxc.Exists)
-        {
-            zxc.Create();
-        }
-        List<ISaveModel> modelsToSave = new List<ISaveModel>();
-		foreach (var item in OnSave)
-		{
-            modelsToSave.Add(item.Save());
-		}
-        var asd = JsonConvert.SerializeObject(modelsToSave, new JsonSerializerSettings
-        {
-            ContractResolver = new CustomContractResolver()
-        });
-     
-        var writer = new StreamWriter(zxc.FullName);
-        writer.Write(asd);
-        writer.Close();
-    }
-    [ContextMenu("Loaddd")]
-    public void Loaddd()
-    {
-        OnSave = new List<ISaveble<ISaveModel>>();
-        foreach (var item in scripts)
-        {
-            OnSave.Add(item as ISaveble<ISaveModel>);
-        }
-        var qwe = new DirectoryInfo(Application.persistentDataPath + "\\Saves");
-        if (!qwe.Exists)
-        {
-            qwe.Create();
-        }
-        var zxc = new FileInfo(qwe + "\\PlayerSave.json");
-        if (!zxc.Exists)
-        {
-            zxc.Create();
-        }
-
-        var reader = new StreamReader(zxc.FullName);
-        var raaa = reader.ReadToEnd();
-        var ccccc = JsonConvert.DeserializeObject<List<ISaveModel>>(raaa);
-		for (int i = 0; i < ccccc.Count; i++)
-		{
-            var saveObj= OnSave.Where(x => x.getTT() == ccccc[i].GetType()).FirstOrDefault();
-			if (saveObj != null)
-			{
-                saveObj.Load(ccccc[i]);
-			}
-		}
-            
-   
-    }*/
 
 }
 public class ObjIndexFinger

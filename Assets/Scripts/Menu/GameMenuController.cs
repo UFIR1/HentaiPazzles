@@ -10,14 +10,20 @@ public class GameMenuController : MonoBehaviour
 	#region menu
 	// Start is called before the first frame update
 	GameObject MainMenu;
-	InputType LastPlayInputTipe = InputType.Player;
+	public InputType LastPlayInputType = InputType.Player;
 	GameObject[] MenuPanels;
+	public SaveMenuController saveMenuController;
 	float LastTimeScale = 1;
-	private void Start()
+	private void Awake()
 	{
 		MainMenu = transform.Find("MainMenu").gameObject;
 		MenuPanels = transform.GetChildrenByTeg(Tags.Menu.ToString());
 	}
+	private void Start()
+	{
+		
+	}
+	
 	public void SwitchMenuActive()
 	{
 		if (CheckActiveMenu())
@@ -27,17 +33,14 @@ public class GameMenuController : MonoBehaviour
 			{
 				item.SetActive(false);
 			}
-			Time.timeScale = LastTimeScale;
-			HotKeysHelper.currentInputType = LastPlayInputTipe;
+			HotKeysHelper.CurrentInputType = LastPlayInputType;
 		}
 		else
 		{
-			LastPlayInputTipe = HotKeysHelper.currentInputType;
-			LastTimeScale = Time.timeScale;
+			LastPlayInputType = HotKeysHelper.CurrentInputType;
 			MainMenu.SetActive(true);
 
-			Time.timeScale = 0;
-			HotKeysHelper.currentInputType = InputType.Global;
+			HotKeysHelper.CurrentInputType = InputType.Global;
 		}
 	}
 	public void Exit()
