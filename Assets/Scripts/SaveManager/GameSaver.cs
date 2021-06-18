@@ -51,18 +51,21 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 			};
 			var saveDirectory = item.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
-			if (item.GetDirectories().Any())
+			if (saveDirectory?.Exists==true)
 			{
-				newSaveView.UpdateTime = saveDirectory.CreationTime;
-			}
-			Texture2D texture = new Texture2D(ScreenShot.Width, ScreenShot.Height);
-			var saveImg = new FileInfo(saveDirectory.FullName + $"\\{FileKeyWord.GameImg}.jpg");
-			if (saveImg.Exists)
-			{
-				byte[] bytes = File.ReadAllBytes(saveImg.FullName);
-				texture.LoadImage(bytes);
-				texture.Apply();
-				newSaveView.Texture = texture;
+				if (item.GetDirectories().Any())
+				{
+					newSaveView.UpdateTime = saveDirectory.CreationTime;
+				}
+				Texture2D texture = new Texture2D(ScreenShot.Width, ScreenShot.Height);
+				var saveImg = new FileInfo(saveDirectory.FullName + $"\\{FileKeyWord.GameImg}.jpg");
+				if (saveImg.Exists)
+				{
+					byte[] bytes = File.ReadAllBytes(saveImg.FullName);
+					texture.LoadImage(bytes);
+					texture.Apply();
+					newSaveView.Texture = texture;
+				}
 			}
 			result.Add(newSaveView);
 		}

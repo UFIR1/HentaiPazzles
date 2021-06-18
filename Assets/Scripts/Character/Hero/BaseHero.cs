@@ -750,10 +750,13 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 		for (int i = 0; i < model.Weapons.Length; i++)//Weapons
 		{
 			var item = model.Weapons[i];
-			weapons[i].unlock = item.unlock;
+			weapons[i].Load(item);
 		}
 		
 		bullets = model.Bullets;
+		MaxHeals = model.MaxHeals;
+		CurrentHeals = model.CurrentHeals;
+		
 	}
 
 	public BaseHeroSaveModel Save()
@@ -763,8 +766,10 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 			Coins = Coins,
 			SaveName = InSaverName
 		};
-		toSave.Weapons = weapons;
+		toSave.Weapons = weapons.Select(x=>x.Save()).ToArray();
 		toSave.Bullets = Bullets;
+		toSave.CurrentHeals = CurrentHeals;
+		toSave.MaxHeals = MaxHeals;
 		return toSave;
 	}
 	public Type getTT()
