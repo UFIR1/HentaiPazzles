@@ -756,7 +756,14 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 		bullets = model.Bullets;
 		MaxHeals = model.MaxHeals;
 		CurrentHeals = model.CurrentHeals;
-		
+		try
+		{
+			ActiveWeapon = weapons[model.ActiveWeaponNumber].weapon;
+		}
+		catch(Exception ex)
+		{
+			Debug.LogError(ex);
+		}
 	}
 
 	public BaseHeroSaveModel Save()
@@ -770,6 +777,11 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 		toSave.Bullets = Bullets;
 		toSave.CurrentHeals = CurrentHeals;
 		toSave.MaxHeals = MaxHeals;
+		
+		if (ActiveWeapon != null)
+		{
+			toSave.ActiveWeaponNumber = weapons.ToList().IndexOf(weapons.Where(x => x.weapon == ActiveWeapon).FirstOrDefault());
+		}
 		return toSave;
 	}
 	public Type getTT()
