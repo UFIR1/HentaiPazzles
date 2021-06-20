@@ -105,6 +105,7 @@ public class ObjectSaver : MonoBehaviour, ISaveble<ObjectSaverModel>, ISaveble<I
 		result.InstanceId = gameObject.GetInstanceID();
 		result.SaveInstant = SaveInstant;
 		result.ItsUniqueObj = itsUniqueObject;
+		result.ObjectName = gameObject.name;
 		
 		if (SaveInstant)
 		{

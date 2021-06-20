@@ -60,6 +60,7 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
                     {
                         var pref = Resources.Load<GameObject>(ccccc[i].PrefabPath.Replace("Assets/Resources/", "").Replace(".prefab", ""));
                         var obj = GameObject.Instantiate(pref);
+                        obj.name = ccccc[i].ObjectName;
                         obj.GetComponent<ObjectSaver>().Load(ccccc[i]);
                     }
 					catch

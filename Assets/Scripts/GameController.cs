@@ -16,12 +16,13 @@ public class GameController : MonoBehaviour
 	private void Awake()
 	{
 		
-		gameController = this;
-        DontDestroyOnLoad(gameObject);
 		if (GameObject.FindGameObjectsWithTag(Tags.GameController.ToString()).Length > 1)
 		{
 			Destroy(gameObject);
 		}
+		DontDestroyOnLoad(gameObject);
+		GameSaver.externalOnLoadStarted += SaverOnLevelStartLoad;
+		GameSaver.externalOnLoadFinished += SaverOnLevelLoaded;
 		gameController = this;
 		gameSaver = gameObject.GetComponent<GameSaver>();
 		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
@@ -30,7 +31,6 @@ public class GameController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-		GameSaver.externalOnLoadFinished += SaverOnLevelLoaded;
 		HotKeysHelper.CurrentInputType = InputType.Player;
 		Init();
 	}
@@ -40,6 +40,14 @@ public class GameController : MonoBehaviour
 		Init();
 
 	}
+	public void SaverOnLevelStartLoad()
+	{
+		Canvas = GameObject.FindGameObjectWithTag(Tags.Canvas.ToString());
+		if (Canvas != null)
+		{
+			gameMenuController = Canvas.GetComponent<GameMenuController>();
+		}
+	}
 	public void SaverOnLevelLoaded()
 	{
 		if (Player == null)
@@ -48,8 +56,11 @@ public class GameController : MonoBehaviour
 			DontDestroyOnLoad(Player);
 		}
 		gameController = this;
-		gameSaver = gameObject.GetComponent<GameSaver>();
-		gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
+		if (gameSaver == null)
+		{
+			gameSaver = gameObject.GetComponent<GameSaver>();
+			gameSaver.CurrentSceneName = SceneManager.GetActiveScene().name;
+		}
 		Init();
 		if (Player != null)
 		{
