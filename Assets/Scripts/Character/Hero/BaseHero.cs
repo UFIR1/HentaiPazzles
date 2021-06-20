@@ -756,9 +756,17 @@ public abstract class BaseHero : BaseChar, ISaveble<BaseHeroSaveModel>, ISaveble
 		bullets = model.Bullets;
 		MaxHeals = model.MaxHeals;
 		CurrentHeals = model.CurrentHeals;
+		nextReloadBullets = null;
 		try
 		{
-			ActiveWeapon = weapons[model.ActiveWeaponNumber].weapon;
+			if (model.ActiveWeaponNumber != null)
+			{
+				ActiveWeapon = weapons[model.ActiveWeaponNumber.Value].weapon;
+			}
+			else
+			{
+				ActiveWeapon = null;
+			}
 		}
 		catch(Exception ex)
 		{
