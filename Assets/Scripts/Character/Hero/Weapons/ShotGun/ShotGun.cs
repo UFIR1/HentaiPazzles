@@ -24,7 +24,7 @@ public class ShotGun : BaseWeapon
 					bulletSpawnerPoint.transform.rotation.z + Random.Range(-spread, spread),
 					bulletSpawnerPoint.transform.rotation.w
 					);
-				var newBullet = Instantiate(CurrentBullet.gameObject, bulletSpawnerPoint.transform.position, bulletRotation);
+				var newBullet = Instantiate(CurrentBullet.bullet.gameObject, bulletSpawnerPoint.transform.position, bulletRotation);
 				newBullet.SetActive(false);
 				newBullet.GetComponent<BaseBullet>().Shooter = Sander;
 				newBullets.Add(newBullet);

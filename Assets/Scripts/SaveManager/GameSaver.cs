@@ -51,18 +51,21 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 			};
 			var saveDirectory = item.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
-			if (item.GetDirectories().Any())
+			if (saveDirectory?.Exists == true)
 			{
-				newSaveView.UpdateTime = saveDirectory.CreationTime;
-			}
-			Texture2D texture = new Texture2D(ScreenShot.Width, ScreenShot.Height);
-			var saveImg = new FileInfo(saveDirectory.FullName + $"\\{FileKeyWord.GameImg}.jpg");
-			if (saveImg.Exists)
-			{
-				byte[] bytes = File.ReadAllBytes(saveImg.FullName);
-				texture.LoadImage(bytes);
-				texture.Apply();
-				newSaveView.Texture = texture;
+				if (item.GetDirectories().Any())
+				{
+					newSaveView.UpdateTime = saveDirectory.CreationTime;
+				}
+				Texture2D texture = new Texture2D(ScreenShot.Width, ScreenShot.Height);
+				var saveImg = new FileInfo(saveDirectory.FullName + $"\\{FileKeyWord.GameImg}.jpg");
+				if (saveImg.Exists)
+				{
+					byte[] bytes = File.ReadAllBytes(saveImg.FullName);
+					texture.LoadImage(bytes);
+					texture.Apply();
+					newSaveView.Texture = texture;
+				}
 			}
 			result.Add(newSaveView);
 		}
@@ -191,6 +194,7 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 		#region imgGenerator
 		var mainCamera = GameObject.FindGameObjectWithTag(Tags.MainCamera.ToString())?.GetComponent<Camera>();
+		
 		if (mainCamera != null)
 		{
 			byte[] photoBytes = CreatePhoto(mainCamera,2);
@@ -245,7 +249,8 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 				{
 					if (!newFiles.Where(x => x.Name == item.Name).Any())
 					{
-						File.Create(newWorkDirectory.FullName + $"\\{item.Name}").Close();
+						//File.Create(newWorkDirectory.FullName + $"\\{item.Name}").Close();
+						item.CopyTo(newWorkDirectory.FullName + $"\\{item.Name}");
 					}
 				}
 			}
@@ -253,11 +258,10 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 			{
 				if (newDirectories != null)
 				{
-					if (!newDirectories.Where(x => x.Name == item.Name).Any())
-					{
-						var lockalDirectory = newWorkDirectory.CreateSubdirectory($"{item.Name}");
-						CreateDirectoryTree(item, lockalDirectory);
-					}
+
+					var lockalDirectory = newWorkDirectory.CreateSubdirectory($"{item.Name}");
+					CreateDirectoryTree(item, lockalDirectory);
+
 				}
 			}
 		}
@@ -291,8 +295,9 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	{
 		var saveMainDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{saveName}");
 		DirectoryInfo saveDirectory = null;
-		if (saveMainDirectory.Exists) {
-			saveDirectory= saveMainDirectory.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
+		if (saveMainDirectory.Exists)
+		{
+			saveDirectory = saveMainDirectory.GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
 		}
 		else
 		{
