@@ -4,15 +4,31 @@ using UnityEngine;
 
 public abstract class BaseEnemy : BaseChar
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	public EnemyType enemyType = EnemyType.Physical;
+	public float speed;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	// Start is called before the first frame update
+	void Start()
+	{
+
+		LocalStart();
+	}
+
+	// Update is called once per frame
+	void Update()
+	{
+
+		LocalUpdate();
+	}
+}
+public enum EnemyType
+{
+	Physical,
+	Ghost
+}
+public enum GroundEnemyMoveDirection
+{
+	left = -1,
+	stay = 0,
+	right = 1
 }

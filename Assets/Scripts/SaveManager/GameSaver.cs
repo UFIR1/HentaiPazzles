@@ -315,9 +315,11 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		string gameConfigText = null;
 		if (gameConfigFile.Exists && scenesDirectory.Exists)
 		{
-			var gameConfigReader = new StreamReader(gameConfigFile.FullName);
-			gameConfigText = gameConfigReader.ReadToEnd();
-			gameConfigReader.Close();
+			using (var gameConfigReader = new StreamReader(gameConfigFile.FullName))
+			{
+				gameConfigText = gameConfigReader.ReadToEnd();
+				gameConfigReader.Close();
+			}
 
 
 		}
