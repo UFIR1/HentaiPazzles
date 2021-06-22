@@ -34,7 +34,7 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
 	{
 
         var ccccc = model.SaveableObjects;
-        var onDestroy = ObjectSaver.UniqueHashController.Where(x => !ccccc.Where(y => y.InstanceId == x.Key).Any() && !ccccc.Where(y => y.PersonalHash == x.Value).Any()).ToList();
+        var onDestroy = ObjectSaver.UniqueHashController.Where(x => !ccccc.Where(y => y.InstanceId == x.Key).Any() && !ccccc.Where(y => y.PersonalHash == x.Value).Any() && x.Saver.SaveInstant).ToList();
         var destroed = new List<ObjIndexFinger>();
         foreach (var item in onDestroy)
         {
@@ -70,12 +70,14 @@ public partial class SceneSaver : MonoBehaviour, ISaveble<SceneSaverModel>, ISav
                   
                 }
 
+
             }
             else
             {
                 var obj = sameObj.FirstOrDefault();
                 obj.Saver.Load(ccccc[i]);
             }
+
         }
 
     }
