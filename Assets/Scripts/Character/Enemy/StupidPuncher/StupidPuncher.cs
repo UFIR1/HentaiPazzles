@@ -10,6 +10,9 @@ public class StupidPuncher : BaseEnemy
 	public OverallSize DownBackOversize;
 	public OverallSize ForwardDownOverSize;
 	public OverallSize ForwardUpOverSize;
+	public ColliderHelper2D punchTrigger;
+	public float punchPreparedTime = 5;
+	public bool punchStarted = false;
 	private Rigidbody2D rb;
 	[SerializeField]
 	private GroundEnemyMoveDirection moveDirection = GroundEnemyMoveDirection.stay;
@@ -26,15 +29,58 @@ public class StupidPuncher : BaseEnemy
 			if (value == GroundEnemyMoveDirection.left)
 			{
 				transform.localScale = new Vector3(Math.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-
 			}
 		}
+	}
+
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+
 	}
 
 	protected override void LocalStart()
 	{
 		rb = gameObject.GetComponent<Rigidbody2D>();
 		MoveDirection = (UnityEngine.Random.Range(0, 1) == 0) ? GroundEnemyMoveDirection.left : GroundEnemyMoveDirection.right;
+		punchTrigger.OnTriggerEnter += OnPunchTriggerEnter;
+		punchTrigger.OnTriggerExit += OnPunchTriggerExit;
+	}
+	public void OnPunchTriggerEnter(Collider2D collision)
+	{
+		var hero = collision.GetComponent<BaseHero>();
+		if (hero != null)
+		{
+			if (!targets.Contains(hero))
+			{
+				targets.Add(hero);
+			}
+			if (!punchStarted)
+			{
+				punchStarted = true;
+				Invoke(nameof(PunchAllTargets), punchPreparedTime);
+			}
+		}
+	}
+	public void OnPunchTriggerExit(Collider2D collision)
+	{
+		var hero = collision.GetComponent<BaseHero>();
+		if (hero != null)
+		{
+			if (targets.Contains(hero))
+			{
+				targets.Remove(hero);
+			}
+		}
+	}
+
+	private List<BaseHero> targets = new List<BaseHero>();
+	public void PunchAllTargets()
+	{
+		foreach (var item in targets)
+		{
+			item.DealDamage(gameObject, Damage);
+		}
+		punchStarted = false;
 	}
 
 	protected override void LocalUpdate()
@@ -43,14 +89,14 @@ public class StupidPuncher : BaseEnemy
 	}
 	private void FixedUpdate()
 	{
-		if ((DownForwardOverSize.raycast.collider == null && DownBackOversize.raycast.collider!=null)
+		if ((DownForwardOverSize.raycast.collider == null && DownBackOversize.raycast.collider != null)
 			||
-			(ForwardDownOverSize.raycast.collider!=null || ForwardUpOverSize.raycast.collider!=null)
+			(ForwardDownOverSize.raycast.collider != null || ForwardUpOverSize.raycast.collider != null)
 			)
 		{
 			SwitchDirection();
 		}
-		if(DownForwardOverSize.raycast.collider != null || DownBackOversize.raycast.collider != null)
+		if (DownForwardOverSize.raycast.collider != null || DownBackOversize.raycast.collider != null)
 		{
 			Move();
 		}
