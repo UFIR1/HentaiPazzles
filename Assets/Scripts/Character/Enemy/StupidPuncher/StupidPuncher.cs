@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class StupidPuncher : BaseEnemy
 {
+	public float punchForce = 5;
 	public OverallSize DownForwardOverSize;
 	public OverallSize DownBackOversize;
 	public OverallSize ForwardDownOverSize;
@@ -13,9 +14,11 @@ public class StupidPuncher : BaseEnemy
 	public ColliderHelper2D punchTrigger;
 	public float punchPreparedTime = 5;
 	public bool punchStarted = false;
+	public Animator anim;
 	private Rigidbody2D rb;
 	[SerializeField]
 	private GroundEnemyMoveDirection moveDirection = GroundEnemyMoveDirection.stay;
+	private GroundEnemyMoveDirection lastDirection = GroundEnemyMoveDirection.stay;
 
 	public GroundEnemyMoveDirection MoveDirection
 	{
@@ -43,7 +46,9 @@ public class StupidPuncher : BaseEnemy
 		rb = gameObject.GetComponent<Rigidbody2D>();
 		MoveDirection = (UnityEngine.Random.Range(0, 1) == 0) ? GroundEnemyMoveDirection.left : GroundEnemyMoveDirection.right;
 		punchTrigger.OnTriggerEnter += OnPunchTriggerEnter;
+		punchTrigger.OnTriggerStay += OnPunchTriggerEnter;
 		punchTrigger.OnTriggerExit += OnPunchTriggerExit;
+
 	}
 	public void OnPunchTriggerEnter(Collider2D collision)
 	{
@@ -56,7 +61,10 @@ public class StupidPuncher : BaseEnemy
 			}
 			if (!punchStarted)
 			{
+				anim?.SetInteger("panchState", 1);
 				punchStarted = true;
+				lastDirection = MoveDirection;
+				MoveDirection = GroundEnemyMoveDirection.stay;
 				Invoke(nameof(PunchAllTargets), punchPreparedTime);
 			}
 		}
@@ -76,11 +84,23 @@ public class StupidPuncher : BaseEnemy
 	private List<BaseHero> targets = new List<BaseHero>();
 	public void PunchAllTargets()
 	{
+		StartCoroutine(_PunchAllTargets());
+		
+	}
+
+	IEnumerator _PunchAllTargets()
+	{
+		anim?.SetInteger("panchState", 2);
+		yield return new WaitForSeconds(0.2f);
 		foreach (var item in targets)
 		{
 			item.DealDamage(gameObject, Damage);
+			item.GetComponent<Rigidbody2D>().AddForce((item.transform.position - transform.position).normalized * punchForce, ForceMode2D.Impulse);
 		}
+		MoveDirection = lastDirection;
+		yield return new WaitForSeconds(0.2f);
 		punchStarted = false;
+		yield break;
 	}
 
 	protected override void LocalUpdate()
