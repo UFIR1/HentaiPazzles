@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameMenuController : MonoBehaviour
 {
@@ -46,6 +47,14 @@ public class GameMenuController : MonoBehaviour
 	public void Exit()
 	{
 		Application.Quit();
+	}
+	public void ExitToMainMenu()
+	{
+		foreach (var item in GameObject.FindObjectsOfType<ObjectSaver>().Where(x=>x.gameObject.scene.name=="DontDestroyOnLoad"))
+		{
+			Destroy(item.gameObject);
+		}
+		SceneManager.LoadScene("MainMenu");
 	}
 
 	private bool CheckActiveMenu()

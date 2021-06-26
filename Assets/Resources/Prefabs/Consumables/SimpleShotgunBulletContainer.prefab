@@ -134,8 +134,8 @@ MonoBehaviour:
   SaveInstant: 1
   scripts:
   - {fileID: 8652737768503650206}
-  prefabToSpawn: {fileID: -8480754973682487484}
-  ownerWeapon: {fileID: 2244950488730860167}
+  itsUniqueObject: 0
+  dontDestroyMe: 0
 --- !u!50 &5992067307371702052
 Rigidbody2D:
   serializedVersion: 4
@@ -148,7 +148,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 1.4
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1

@@ -17,6 +17,8 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	public static string CurrentSaveName;
 	public static ExternalOnLoadFinished externalOnLoadFinished;
 	public delegate void ExternalOnLoadFinished();
+	public static ExternalOnLoadStarted externalOnLoadStarted;
+	public delegate void ExternalOnLoadStarted();
 
 	private void Awake()
 	{
@@ -313,9 +315,11 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 		string gameConfigText = null;
 		if (gameConfigFile.Exists && scenesDirectory.Exists)
 		{
-			var gameConfigReader = new StreamReader(gameConfigFile.FullName);
-			gameConfigText = gameConfigReader.ReadToEnd();
-			gameConfigReader.Close();
+			using (var gameConfigReader = new StreamReader(gameConfigFile.FullName))
+			{
+				gameConfigText = gameConfigReader.ReadToEnd();
+				gameConfigReader.Close();
+			}
 
 
 		}
@@ -339,6 +343,15 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 
 	private void loadingGameSceneWithUniqueObjectsFineshed(AsyncOperation obj)
 	{
+		try
+		{
+			ExternalVoidsOnLoadStarted();
+		}
+		catch (Exception ex)
+		{
+			UnityEngine.Debug.LogError(ex);
+		}
+
 		var saveDirectory = new DirectoryInfo(fileManager.MainDirectory.FullName + $"\\Save_{CurrentSaveName}").GetDirectories().OrderBy(x => x.CreationTimeUtc).FirstOrDefault();
 		var scenesDirectory = new DirectoryInfo(saveDirectory + "\\Scenes");
 		var sceneToLoadFile = new FileInfo(scenesDirectory + $"\\{SceneManager.GetActiveScene().name}.json");
@@ -365,8 +378,14 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	private void loadingSceneWithUniqueObjectsFineshed(AsyncOperation obj)
 	{
 
-
-
+		try
+		{
+			ExternalVoidsOnLoadStarted();
+		}
+		catch(Exception ex) 
+		{ 
+			UnityEngine.Debug.LogError(ex); 
+		}
 
 		(var sceneToLoadFile, var saveDirectory) = GetFileAndDirectoryToLoad();
 
@@ -395,6 +414,11 @@ public class GameSaver : MonoBehaviour, ISaveble<GameSaverModel>, ISaveble<ISave
 	{
 		externalOnLoadFinished();
 	}
+	private void ExternalVoidsOnLoadStarted()
+	{
+		externalOnLoadStarted();
+	}
+
 	public (FileInfo, DirectoryInfo) GetFileAndDirectoryToLoad()
 	{
 		FileInfo resultFile = null;

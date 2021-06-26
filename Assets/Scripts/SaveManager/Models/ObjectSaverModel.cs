@@ -6,6 +6,7 @@ public class ObjectSaverModel : ISaveModel
 {
 	public string saveName = "ObjectSaver";
 	public override string SaveName { get => saveName; set => saveName=value; }
+	public string ObjectName { get; set; }
 	public string PersonalHash { get; set; }
 	public int InstanceId { get; set; }
 	public string PrefabPath { get; set; }

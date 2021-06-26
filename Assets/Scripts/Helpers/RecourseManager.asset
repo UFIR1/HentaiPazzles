@@ -34,3 +34,6 @@ MonoBehaviour:
   - prefab: {fileID: 2089216817953998230, guid: a2f95c1228d77c84fb1fa71dcd649d08,
       type: 3}
     prefabPath: Assets/Resources/Prefabs/Heroes/Swordsman/Swordsman.prefab
+  - prefab: {fileID: 6122110088102200826, guid: 216ed6868f6800c478a6ce82c599e9f1,
+      type: 3}
+    prefabPath: Assets/Resources/Prefabs/Enemy/StupidPuncher/StupidPuncher.prefab

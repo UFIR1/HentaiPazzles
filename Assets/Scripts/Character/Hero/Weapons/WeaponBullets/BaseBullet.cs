@@ -9,6 +9,7 @@ using UnityEngine;
 public abstract class BaseBullet : MonoBehaviour
 {
 	public string ObjType { get { return this.GetType().Name; } set { } }
+	public DamageType _damageType;
 	public int damage;
 	private BaseHero shooter;
 	public float speed;
@@ -47,7 +48,6 @@ public abstract class BaseBullet : MonoBehaviour
 			{
 				Physics2D.IgnoreCollision(transform.GetComponent<Collider2D>(), item);
 			}*/
-			damage = value.Damage;
 
 		}
 	}
@@ -62,7 +62,24 @@ public abstract class BaseBullet : MonoBehaviour
 		body.AddForce(vector.normalized * force, ForceMode2D.Impulse);
 		Destroy(gameObject);
 	}
-
+	protected bool DealDamageEnemy(Collider2D collision, BaseChar target)
+	{
+		if (target is BaseEnemy enemy)
+		{
+			if (_damageType.GetEnemyTargets()?.Contains(enemy.enemyType)==true)
+			{
+				enemy.DealDamage(gameObject,damage);
+				return true;
+			}
+		}
+		else
+		{
+			target.DealDamage(gameObject, damage);
+			OnTriggerEnter2D(collision);
+			return true;
+		}
+		return false;
+	}
 
 }
 

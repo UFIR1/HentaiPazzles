@@ -80,6 +80,12 @@ public class ISaveModelConverter : JsonConverter
 				return JsonConvert.DeserializeObject<SceneSaverModel>(jo.ToString(), SpecifiedSubclassConversion);
 			case nameof(UniqueObjectModel):
 				return JsonConvert.DeserializeObject<UniqueObjectModel>(jo.ToString(), SpecifiedSubclassConversion);
+			case nameof(PlatformMoveModel):
+				return JsonConvert.DeserializeObject<PlatformMoveModel>(jo.ToString(), SpecifiedSubclassConversion);
+			case nameof(LineRendererSaverModel):
+				return JsonConvert.DeserializeObject<LineRendererSaverModel>(jo.ToString(), SpecifiedSubclassConversion);
+			case nameof(StupidPuncherModel):
+				return JsonConvert.DeserializeObject<StupidPuncherModel>(jo.ToString(), SpecifiedSubclassConversion);
 			default:
 				throw new Exception();
 		}

@@ -15,10 +15,12 @@ public class SimpleShotGunBullet : BaseBullet
 		BaseChar target = null;
 		if (collision.transform.tag == Tags.Enemy.ToString() && collision.transform.TryGetComponent(out target))
 		{
-			target.DealDamage(gameObject, damage);
-			base.OnTriggerEnter2D(collision);
+			if (DealDamageEnemy(collision, target))
+			{
+				base.OnTriggerEnter2D(collision);
+			}
 		}
-		if(collision.transform.tag == Tags.LevelBorder.ToString())
+		if (collision.tag == Tags.LevelBorder.ToString())
 		{
 			Destroy(gameObject);
 		}

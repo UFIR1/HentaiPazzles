@@ -11,6 +11,7 @@ public class StartNewGameButton : MonoBehaviour
 		SceneManager.LoadScene(sceneLoadName);
 		GameController.gameSaver.DeletePreSave();
 		GameController.gameSaver.CurrentSceneName = sceneLoadName;
+		HotKeysHelper.CurrentInputType = InputType.Player;
 		GameSaver.CurrentSaveName = "NewGame";
 	}
 }

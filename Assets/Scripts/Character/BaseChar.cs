@@ -8,25 +8,30 @@ public abstract class BaseChar : MonoBehaviour
 	private int maxHeals;
 	[SerializeField]
 	private int currentHeals;
-	[SerializeField]
-	private int damage;
+
 
 	public int CurrentHeals
 	{
 		get => currentHeals; 
 		protected set
 		{
-			if (value < maxHeals)
+			if (currentHeals > 0)
 			{
-				currentHeals = value;
-			}
-			else
-			{
-				currentHeals = maxHeals;
+				if (value < maxHeals)
+				{
+					currentHeals = value;
+					if (currentHeals <= 0)
+					{
+						OnDeath();
+					}
+				}
+				else
+				{
+					currentHeals = maxHeals;
+				}
 			}
 		}
 	}
-	public int Damage { get => damage; protected set => damage = value; }
 	public int MaxHeals { get => maxHeals; protected set => maxHeals = value; }
 
 	public void DealDamage(GameObject Projectile, int damage)
@@ -40,7 +45,8 @@ public abstract class BaseChar : MonoBehaviour
 	}
 	public bool DealHeal(GameObject Projectile, int heal)
 	{
-		if (currentHeals < maxHeals)
+		
+		if (currentHeals < maxHeals && currentHeals>0)
 		{
 			CurrentHeals += OnHeal(heal);
 			return true;
@@ -48,6 +54,11 @@ public abstract class BaseChar : MonoBehaviour
 		return false;
 
 	}
+	protected virtual void OnDeath()
+	{
+
+	}
+
 	protected virtual int OnHeal(int heal)
 	{
 		return heal;
