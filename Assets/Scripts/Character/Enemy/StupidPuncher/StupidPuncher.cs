@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class StupidPuncher : BaseEnemy
+public class StupidPuncher : BaseEnemy, ISaveble<StupidPuncherModel>, ISaveble<ISaveModel>
 {
 	public float punchForce = 5;
 	public OverallSize DownForwardOverSize;
@@ -85,8 +85,9 @@ public class StupidPuncher : BaseEnemy
 	public void PunchAllTargets()
 	{
 		StartCoroutine(_PunchAllTargets());
-		
 	}
+
+	
 
 	IEnumerator _PunchAllTargets()
 	{
@@ -154,5 +155,39 @@ public class StupidPuncher : BaseEnemy
 		}
 
 	}
-	// Start is called before the first frame update
+
+
+	protected override void OnDeath()
+	{
+		Destroy(gameObject);
+	}
+	public Type getTT()
+	{
+		return typeof(StupidPuncherModel);
+	}
+	public void Load(StupidPuncherModel model)
+	{
+		 base.Load(model);
+	}
+
+	public StupidPuncherModel Save()
+	{
+		var toSave = new StupidPuncherModel();
+		base.Save().PullChild(toSave);
+		return toSave;
+	}
+
+	public void Load(ISaveModel model)
+	{
+		Load(model as StupidPuncherModel);
+	}
+
+	ISaveModel ISaveble<ISaveModel>.Save()
+	{
+		return Save();
+	}
+}
+public class StupidPuncherModel: BaseEnemyModel
+{
+	public override string SaveName { get { return nameof(StupidPuncherModel); } set => base.SaveName = value; }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ShotGun : BaseWeapon
@@ -24,10 +25,12 @@ public class ShotGun : BaseWeapon
 					bulletSpawnerPoint.transform.rotation.z + Random.Range(-spread, spread),
 					bulletSpawnerPoint.transform.rotation.w
 					);
-				var newBullet = Instantiate(CurrentBullet.bullet.gameObject, bulletSpawnerPoint.transform.position, bulletRotation);
-				newBullet.SetActive(false);
-				newBullet.GetComponent<BaseBullet>().Shooter = Sander;
-				newBullets.Add(newBullet);
+				var newBulletObj = Instantiate(CurrentBullet.bullet.gameObject, bulletSpawnerPoint.transform.position, bulletRotation);
+				newBulletObj.SetActive(false);
+				var newBullet = newBulletObj.GetComponent<BaseBullet>();
+				newBullet.Shooter = Sander;
+				newBullet.damage = passModules.Where(x => x._damageType == newBullet._damageType).FirstOrDefault()?._damage??0;
+				newBullets.Add(newBulletObj);
 			}
 			foreach (var item in newBullets)
 			{
