@@ -23,7 +23,7 @@ public class PlatformMove : MonoBehaviour, ISaveble<PlatformMoveModel>, ISaveble
 		SurfaceEffector = GetComponent<SurfaceEffector2D>();
 		var toVec = (moveToPosition - transform.position).normalized;
 		currentPlatformVec = toVec;
-		Debug.Log(toVec);
+		//Debug.Log(toVec);
 	}
 
 	// Update is called once per frame
@@ -73,7 +73,7 @@ public class PlatformMove : MonoBehaviour, ISaveble<PlatformMoveModel>, ISaveble
 			}
 			moveToPosition = lineRenderer.GetPosition(nextPositionNum);
 			var toVec = (moveToPosition - transform.position).normalized;
-			Debug.Log(toVec);
+			//Debug.Log(toVec);
 			currentPlatformVec = toVec;
 
 
@@ -98,7 +98,7 @@ public class PlatformMove : MonoBehaviour, ISaveble<PlatformMoveModel>, ISaveble
 			if (!StayOnPlatform.Contains(rb))
 			{
 				StayOnPlatform.Add(rb);
-				Debug.Log($"added forse: {currentPlatformVec}");
+				//Debug.Log($"added forse: {currentPlatformVec}");
 			}
 		}
 	}
@@ -109,7 +109,7 @@ public class PlatformMove : MonoBehaviour, ISaveble<PlatformMoveModel>, ISaveble
 			StayOnPlatform.Remove(rb);
 			//rb.velocity = Vector2.zero;
 			rb.AddForce(currentPlatformVec * speed * rb.mass, ForceMode2D.Impulse);
-			Debug.Log($"added Impulse: {currentPlatformVec}");
+			//Debug.Log($"added Impulse: {currentPlatformVec}");
 		}
 	}
 
