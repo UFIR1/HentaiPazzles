@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
+using Runes;
 
 public abstract class BaseWeapon : MonoBehaviour, ISaveble<BaseWeaponModel>, ISaveble<ISaveModel>
 {
 	private float switchableTime;
 	private float reloadTime;
+	[SerializeField]
+	private int _startDamage;
+	[SerializeField]
+	private int _currentDamage;
+	[SerializeField]
+	private float _force;
 	public float SwitchableTime { get => switchableTime; private set => switchableTime = value; }
 	public float ReloadTime { get => reloadTime; private set => reloadTime = value; }
 	[SerializeField]
@@ -25,18 +32,28 @@ public abstract class BaseWeapon : MonoBehaviour, ISaveble<BaseWeaponModel>, ISa
 	}
 	public int MagazineSize { get => magazineSize; protected set => magazineSize = value; }
 	public StoredBullet CurrentBullet { get => currentBullet; protected set => currentBullet = value; }
+	public int CurrentDamage { get => _currentDamage; set => _currentDamage = value; }
+	public float Force { get => _force; set => _force = value; }
+
 	public delegate void OnMagazineLoadChangeHandler(int currentMagazineLoaded, BaseBullet currentBullet);
 	public event OnMagazineLoadChangeHandler OnMagazineLoadChange;
-	public List<BulletPassModule> passModules;
+	public List<BulletPassModule> passModules = new List<BulletPassModule>();
+	public List<BaseRune> runes = new List<BaseRune>() ;
 
-	
+	private void Start()
+	{
+		runes.Add(new DamageUp() { _grade = RuneGrade.Common, _damageWeight = 0.2f });
+		passModules.Add(new SimpleShotGunBulletModule() { Damage = CurrentDamage, Force = Force });
+		RecalculateAllBulletModules();
+	}
 
-	public virtual int Reload(int downloadedBullets, BaseBullet downloadedBulletType, out BaseBullet oldBulletType)
+	public virtual int Reload(int downloadedBullets, BaseBullet downloadedBullet, out BaseBullet oldBulletType)
 	{
 		//неуспешная перезарядка 
-		if(!passModules.Where(x=>x._damageType== downloadedBulletType._damageType).Any())
+		
+		if(!passModules.Where(x=>x.bulletType == downloadedBullet.GetType()).Any())
 		{
-			oldBulletType = downloadedBulletType;
+			oldBulletType = downloadedBullet;
 			return downloadedBullets;
 		}
 
@@ -46,11 +63,11 @@ public abstract class BaseWeapon : MonoBehaviour, ISaveble<BaseWeaponModel>, ISa
 			currentBullet = new StoredBullet();
 		}
 		oldBulletType = CurrentBullet?.bullet;
-		if (downloadedBulletType.GetType() != CurrentBullet?.GetType())
+		if (downloadedBullet.GetType() != CurrentBullet?.GetType())
 		{
 			var oldMagazineLoaded = CurrentMagazineLoaded;
 			oldBulletType = CurrentBullet?.bullet;
-			CurrentBullet.bullet = downloadedBulletType;
+			CurrentBullet.bullet = downloadedBullet;
 			CurrentMagazineLoaded = downloadedBullets;
 			return oldMagazineLoaded;
 		}
@@ -59,12 +76,35 @@ public abstract class BaseWeapon : MonoBehaviour, ISaveble<BaseWeaponModel>, ISa
 		var toComeBack = downloadedBullets - freeLoad;
 		if (toComeBack < 0) { toComeBack = 0; }
 		CurrentMagazineLoaded += downloadedBullets - toComeBack;
-		CurrentBullet.bullet = downloadedBulletType;
+		CurrentBullet.bullet = downloadedBullet;
 		return toComeBack;
+	}
+
+
+	public void RecalculateAllBulletModules()
+	{
+		foreach (var item in passModules)
+		{
+			RecalculateBulletModule(item);
+		}
+	}
+
+	public void RecalculateBulletModule(BulletPassModule bulletModule )
+	{
+		foreach (BaseBulletRune item in runes.Where(x=> x is BaseBulletRune))
+		{
+			item.ApplyRune(this, ref bulletModule);
+		}
 	}
 
 	public abstract void TriggerDown(BaseHero Sander);
 	public abstract void TriggerUp(BaseHero Sander);
+
+
+
+
+
+
 
 	public System.Type getTT()
 	{
@@ -113,18 +153,6 @@ public class BaseWeaponModel : ISaveModel
 	public List<BulletPassModule> BulletPassModules { get; set; }
 }
 
-[System.Serializable]
-public class BulletPassModule
-{
-	public DamageType _damageType;
-	public int _damage;
-	public List<Type> types;
-}
-
-public enum PhysicalBulletTypes
-{
-
-}
 
 public enum DamageType
 {

@@ -29,7 +29,8 @@ public class ShotGun : BaseWeapon
 				newBulletObj.SetActive(false);
 				var newBullet = newBulletObj.GetComponent<BaseBullet>();
 				newBullet.Shooter = Sander;
-				newBullet.damage = passModules.Where(x => x._damageType == newBullet._damageType).FirstOrDefault()?._damage??0;
+				var module = passModules.Where(x => x.bulletType == newBullet.GetType()).FirstOrDefault();
+				module.PullBullet(ref newBullet);
 				newBullets.Add(newBulletObj);
 			}
 			foreach (var item in newBullets)
