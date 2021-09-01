@@ -128,6 +128,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4df78e61c0e3d014da5cddf9017e8f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _startDamage: 0
+  _currentDamage: 0
+  _force: 0
   bulletSpawnerPoint: {fileID: 7383137645815615592}
-  bulletCountPerShot: 5
-  spread: 0.24
+  startedFireModeModule:
+    delayBetweenShots: 0
+  startedShootingModule:
+    bulletCountPerShot: 5
+    spread: 0.1
