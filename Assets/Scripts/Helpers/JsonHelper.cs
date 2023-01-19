@@ -86,6 +86,8 @@ public class ISaveModelConverter : JsonConverter
 				return JsonConvert.DeserializeObject<LineRendererSaverModel>(jo.ToString(), SpecifiedSubclassConversion);
 			case nameof(StupidPuncherModel):
 				return JsonConvert.DeserializeObject<StupidPuncherModel>(jo.ToString(), SpecifiedSubclassConversion);
+			case nameof(SimpleShotGunBulletModuleModel):
+				return JsonConvert.DeserializeObject<SimpleShotGunBulletModuleModel>(jo.ToString(), SpecifiedSubclassConversion);
 			default:
 				throw new Exception();
 		}

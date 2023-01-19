@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Transform))]
-public class TransformSaver : MonoBehaviour, ISaveble<TransformModel>, ISaveble<ISaveModel>
+public class TransformSaver : MonoBehaviour, ISaveble<TransformModel>, ISaveble<ISaveModel> 
 {
 	public string PersonalHash { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -12,7 +12,6 @@ public class TransformSaver : MonoBehaviour, ISaveble<TransformModel>, ISaveble<
 	public bool SaveLocalPosition = false;
 	public bool SaveRotation = false;
 	public bool SaveScale= false;
-
 
 	public Type getTT()
 	{

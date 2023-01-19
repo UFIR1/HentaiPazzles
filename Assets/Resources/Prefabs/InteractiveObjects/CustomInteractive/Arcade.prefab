@@ -28,6 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.68, y: -1.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7607175991013889569}
   m_Father: {fileID: 0}
@@ -101,7 +102,14 @@ MonoBehaviour:
     type: 3}
   usedTextPlace: {fileID: 7607175991013889569}
   coinCost: 1
+  xCorMaxRnd: 5
+  xCorMinRnd: -5
+  yCorMaxRnd: 5
+  yCorMinRnd: 3
+  coolDown: 0
   spawnerEvents: []
+  singlton: 0
+  waitBetweenSpawns: 0.5
 --- !u!1 &5572849103602937307
 GameObject:
   m_ObjectHideFlags: 0
@@ -128,6 +136,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.49, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6147515465566736872}
   m_RootOrder: 0
